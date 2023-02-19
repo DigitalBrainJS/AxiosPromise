@@ -22,10 +22,13 @@
     },
     "./package.json": "./package.json"
   },
+<<<<<<< HEAD
   "repository": {
     "type": "git",
     "url": "https://github.com/DigitalBrainJS/AxiosPromise.git"
   },
+=======
+>>>>>>> e4c571f4f4a846e1694125519d341253ca562139
   "keywords": [
     "promise",
     "cancelable",
