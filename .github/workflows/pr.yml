@@ -74,9 +74,7 @@ jobs:
           signoff: false
           team-reviewers: |
             owners
-            maintainers
-          #assignees: jasonsaayman
-          #reviewers: jasonsaayman
+          # maintainers
           draft: false
       - name: Show PR link
         if: ${{ steps.cpr.outputs.pull-request-url }}
