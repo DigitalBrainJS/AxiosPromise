@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "mocha ./test/specs",
+    "test:build:version": "node ./bin/check-build-version.js",
     "preversion": "gulp version",
     "version": "npm run build && git add dist && git add package.json",
     "build": "gulp clear && cross-env NODE_ENV=production rollup -c -m",

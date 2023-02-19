@@ -1,27 +1,27 @@
 import fs from 'fs';
 import assert from 'assert';
-import axios from '../index.js';
-import axiosBuild from '../dist/node/axios.cjs';
+import {AxiosPromise} from '../lib/index.js';
+import {AxiosPromise as AxiosPromiseBuild} from '../dist/axios-promise.cjs';
 
 const {version} = JSON.parse(fs.readFileSync('./package.json'));
 
 console.log('Checking versions...\n----------------------------')
 
 console.log(`Package version: v${version}`);
-console.log(`Axios version: v${axios.VERSION}`);
-console.log(`Axios build version: v${axiosBuild.VERSION}`);
+console.log(`AxiosPromise version: v${AxiosPromise.VERSION}`);
+console.log(`AxiosPromise build version: v${AxiosPromiseBuild.VERSION}`);
 console.log(`----------------------------`);
 
 assert.strictEqual(
   version,
-  axios.VERSION,
-  `Version mismatch between package and Axios ${version} != ${axios.VERSION}`
+  AxiosPromise.VERSION,
+  `Version mismatch between package and AxiosPromise ${version} != ${AxiosPromise.VERSION}`
 );
 
 assert.strictEqual(
   version,
-  axiosBuild.VERSION,
-  `Version mismatch between package and build ${version} != ${axiosBuild.VERSION}`
+  AxiosPromiseBuild.VERSION,
+  `Version mismatch between package and build ${version} != ${AxiosPromiseBuild.VERSION}`
 );
 
 console.log('✔️ PASSED\n');
