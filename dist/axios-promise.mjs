@@ -1,4 +1,4 @@
-// AxiosPromise v0.0.0 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
+// AxiosPromise v0.0.1 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
 const {
   hasOwn = (({hasOwnProperty}) => (obj, prop) => hasOwnProperty.call(obj, prop))(Object.prototype)
 } = Object;
@@ -272,7 +272,7 @@ const {prototype: prototype$1} = EventEmitter;
 prototype$1.addEventListener = prototype$1.on;
 prototype$1.removeEventListener = prototype$1.off;
 
-const [kSignal, kAborted, kAbort, kEvents] = utils.symbols('signal', 'aborted', 'abort', 'events');
+const [kSignal, kAborted, kAbort] = utils.symbols('signal', 'aborted', 'abort');
 
 const hasNativeSupport = typeof AbortController === 'function' && typeof AbortSignal === 'function';
 
@@ -303,7 +303,7 @@ const _AbortSignal = hasNativeSupport ? AbortSignal : class AbortSignal extends 
 
     typeof (listener = this['on' + type]) === 'function' && listener.call(this, event);
 
-    this[kEvents].emit(type, event);
+    this.emit(type, event);
   }
 
   get [Symbol.toStringTag]() {
@@ -336,6 +336,8 @@ const _AbortController = hasNativeSupport ? AbortController : class AbortControl
     return '[object AbortController]'
   }
 };
+
+const VERSION = "0.0.1";
 
 const {isGenerator, isGeneratorFunction, isFunction, lazyBind, asap, defineConstants, symbols, isAbortSignal} = utils;
 
@@ -395,9 +397,8 @@ const STATE_PENDING = 0;
 const STATE_FULFILLED = 1;
 const STATE_REJECTED = 2;
 
-const ATOMIC_MODE_DISABLED = 0;
-const ATOMIC_MODE_AWAIT = 1;
-const ATOMIC_MODE_DETACHED = 2;
+const ATOMIC_MODE_AWAIT = false;
+const ATOMIC_MODE_DETACHED = true;
 
 const {push} = Array.prototype;
 
@@ -509,7 +510,7 @@ class AxiosPromise{
   atomic(mode = ATOMIC_MODE_AWAIT) {
     const promise = this.then();
 
-    promise[kAtomic] = (this[kAtomic] = mode);
+    promise[kAtomic] = (this[kAtomic] = !!mode);
 
     return promise;
   }
@@ -531,7 +532,7 @@ class AxiosPromise{
     let parent;
     let atomic = target[kAtomic];
 
-    while (!atomic && (parent = target[kParent]) && !parent[kFinalized] && (forced || typeof parent[kCallbacks] === 'function' || parent[kCallbacks].length <= 1)) {
+    while (atomic === undefined && (parent = target[kParent]) && !parent[kFinalized] && (forced || typeof parent[kCallbacks] === 'function' || parent[kCallbacks].length <= 1)) {
       atomic = parent[kAtomic];
       target = parent;
     }
@@ -582,7 +583,6 @@ class AxiosPromise{
   [kUnsubscribe](chain) {
     const parentCallbacks = this[kCallbacks];
     const callback = chain[kCallback];
-    // TODO: parentCallbacks === callback probably redundant
     if(typeof parentCallbacks === 'function' && parentCallbacks === callback) {
       this[kCallbacks] = null;
     } else {
@@ -805,7 +805,7 @@ class AxiosPromise{
   }
 
   static resolve(value, options) {
-    const atomic = options != null && options.atomic || 0;
+    const atomic = options != null ? !!options.atomic : undefined;
 
     if (value instanceof this && value[kSync] === this[kSync] && value[kAtomic] === atomic) {
       return value;
@@ -997,6 +997,15 @@ prototype[kSync] = false;
 lazyBind(prototype, ['cancel', 'onCancel', 'signal']);
 lazyBind(AxiosPromise,['delay', 'promisify']);
 
+defineConstants(AxiosPromise, {
+  VERSION
+});
+
+defineConstants(prototype, {
+  CanceledError,
+  TimeoutError
+});
+
 class AxiosPromiseSync extends AxiosPromise {
   get [Symbol.toStringTag](){
     return 'AxiosPromiseSync';
@@ -1004,17 +1013,6 @@ class AxiosPromiseSync extends AxiosPromise {
 }
 
 AxiosPromiseSync.prototype[kSync] = true;
-
-defineConstants(prototype, {
-  CanceledError,
-  TimeoutError
-});
-
-defineConstants(AxiosPromise, {
-  ATOMIC_MODE_DETACHED,
-  ATOMIC_MODE_AWAIT,
-  ATOMIC_MODE_DISABLED
-});
 
 export { _AbortController as AbortController, _AbortSignal as AbortSignal, AxiosPromise, AxiosPromiseSync, EventEmitter, utils };
 //# sourceMappingURL=axios-promise.mjs.map
