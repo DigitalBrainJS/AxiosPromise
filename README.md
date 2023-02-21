@@ -6,6 +6,9 @@ Lightweight Promises/A+ compatible implementation with cancellation, sync mode, 
 
 [![npm version](https://img.shields.io/npm/v/axios-promise.svg?style=flat-square)](https://www.npmjs.org/package/axios-promise)
 [![CDNJS](https://img.shields.io/cdnjs/v/axios-promise.svg?style=flat-square)](https://cdnjs.com/libraries/axios-promise)
+[![Build status](https://img.shields.io/github/actions/workflow/status/digitalbrainjs/axios-promise/ci.yml?branch=master&label=CI&logo=github&style=flat-square)](https://github.com/digitalbrainjs/axios-promise/actions/workflows/ci.yml)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/axios-promise?style=flat-square)](https://bundlephobia.com/package/axios-promise@latest)
+[![npm downloads](https://img.shields.io/npm/dm/axios-promise.svg?style=flat-square)](https://npm-stat.com/charts.html?package=axios-promise)
 
 </div>
 
@@ -22,6 +25,8 @@ import {AxiosPromise, AxiosPromiseSync} from 'axios-promise';
 ```
 
 ## Basic Examples
+
+See [Live Playground](https://codesandbox.io/s/tender-pond-wy5ujx?file=/src/index.js)
 
 ```js
 function cancelableFetch(url) {
@@ -68,7 +73,7 @@ const p = requestJSON('http://httpbin.org/get');
 
 - recursive cancellation by rejecting the deepest promise in the chain with a special `CanceledError` reason
 
-    > Note: AxiosPromise passes an additional scope argument to the executor function and then to the handlers, which refers to the promise context.
+    > Note: AxiosPromise passes an additional scope argument to the executor function and `then` handlers, which refers to the promise context.
     
     ```js
     const p = new AxiosPromise((resolve, reject, scope) => {
