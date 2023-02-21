@@ -32,7 +32,7 @@ interface PromisifyOptions {
     scopeArg?: boolean;
 }
 
-declare class CanceledError extends Error {
+export class CanceledError extends Error {
     constructor(message?: string);
     readonly name: string;
     readonly code: string;
@@ -44,7 +44,7 @@ declare class CanceledError extends Error {
     static init(name: string, code): void;
 }
 
-declare class TimeoutError extends CanceledError {
+export class TimeoutError extends CanceledError {
     constructor(message: string);
     constructor(timeout: number);
 }
