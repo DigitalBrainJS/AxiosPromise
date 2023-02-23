@@ -28,7 +28,7 @@ jobs:
           cache: npm
       - run: npm install
       - name: Test with coverage
-        run: npm test:coverage
+        run: npm run test:coverage
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:
