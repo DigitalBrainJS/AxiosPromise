@@ -1,12 +1,12 @@
 {
   "name": "axios-promise",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "Lightweight Promises/A+ compatible implementation with cancellation, sync mode, timeouts, coroutines and signals support",
   "main": "./lib/index.js",
   "type": "module",
   "scripts": {
     "test": "mocha ./test/specs",
-    "test:coverage": "c8 npm run test",
+    "test:coverage": "c8 --reporter=lcov --reporter=text npm run test",
     "test:build:version": "node ./bin/check-build-version.js",
     "coverage:report": "c8 report",
     "coveralls": "c8 report --reporter=text-lcov | coveralls",

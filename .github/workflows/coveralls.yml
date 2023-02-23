@@ -12,7 +12,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 16.x
-      - name: npm install, make test-coverage
+      - name: npm install, test:coverage
         run: |
           npm install
           npm run test:coverage
