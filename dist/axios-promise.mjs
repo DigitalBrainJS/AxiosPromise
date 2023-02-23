@@ -1,4 +1,4 @@
-// AxiosPromise v0.0.2 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
+// AxiosPromise v0.0.1 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
 const {
   hasOwn = (({hasOwnProperty}) => (obj, prop) => hasOwnProperty.call(obj, prop))(Object.prototype)
 } = Object;
@@ -337,7 +337,7 @@ const _AbortController = hasNativeSupport ? AbortController : class AbortControl
   }
 };
 
-const VERSION = "0.0.2";
+const VERSION = "0.0.1";
 
 const {isGenerator, isGeneratorFunction, isFunction, lazyBind, asap, defineConstants, symbols, isAbortSignal} = utils;
 
