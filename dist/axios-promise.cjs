@@ -1,4 +1,4 @@
-// AxiosPromise v0.0.3 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
+// AxiosPromise v0.0.4 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
 'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
@@ -38,7 +38,10 @@ const _setImmediate = ((setImmediateSupported, postMessageSupported) => {
 const asap$1 = typeof queueMicrotask !== 'undefined' ?
   queueMicrotask : ( typeof process !== 'undefined' && process.nextTick || _setImmediate);
 
-const functionTypeTest = ({constructor}) => (thing) => thing && isFunction$1(thing) && thing.constructor === constructor;
+const functionTypeTest = ({constructor}) => {
+  const {name} = constructor;
+  return (thing) => thing && isFunction$1(thing) && (thing.constructor === constructor || (name && thing.constructor.name === name));
+};
 
 const isGeneratorFunction$1 = functionTypeTest(function* () {});
 
@@ -341,7 +344,7 @@ const _AbortController = hasNativeSupport ? AbortController : class AbortControl
   }
 };
 
-const VERSION = "0.0.3";
+const VERSION = "0.0.4";
 
 const {isGenerator, isGeneratorFunction, isFunction, lazyBind, asap, defineConstants, symbols, isAbortSignal} = utils;
 
