@@ -27,4 +27,9 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: npm
       - run: npm install
-      - run: npm test
+      - name: Test with coverage
+        run: npm test:coverage
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
