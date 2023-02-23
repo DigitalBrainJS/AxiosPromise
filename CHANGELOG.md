@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.0.5](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.0.4...v0.0.5) (2023-02-23)
+
+
+### Bug Fixes
+
+* refactored to _unhandledRejection; ([#11](https://github.com/DigitalBrainJS/AxiosPromise/issues/11)) ([f4cab96](https://github.com/DigitalBrainJS/AxiosPromise/commit/f4cab9641985e20a7249bf0bb9aad96386814b52))
+
+### Contributors to this release
+
+- Dmitriy Mozgovoy
+
 ## [0.0.4](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.0.3...v0.0.4) (2023-02-23)
 
 
