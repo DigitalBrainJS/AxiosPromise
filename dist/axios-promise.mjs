@@ -1,4 +1,4 @@
-// AxiosPromise v0.0.1 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
+// AxiosPromise v0.0.3 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
 const {
   hasOwn = (({hasOwnProperty}) => (obj, prop) => hasOwnProperty.call(obj, prop))(Object.prototype)
 } = Object;
@@ -337,7 +337,7 @@ const _AbortController = hasNativeSupport ? AbortController : class AbortControl
   }
 };
 
-const VERSION = "0.0.1";
+const VERSION = "0.0.3";
 
 const {isGenerator, isGeneratorFunction, isFunction, lazyBind, asap, defineConstants, symbols, isAbortSignal} = utils;
 
@@ -763,27 +763,14 @@ class AxiosPromise{
     return this.then(null, onRejected);
   }
 
-/*  finally(onFinally) {
-    const {constructor} = this;
-
-    const fn = (cb, value, isRejected, scope) => constructor.resolve(() => onFinally({value, isRejected}, scope)).then(cb);
-
-    return this.then(
-      (value, scope) => fn(() => value, value, false, scope),
-      (reason, scope) => fn(() => {throw reason}, reason, true, scope)
-    )
-  }*/
-
   finally(callback) {
     let {constructor} = this;
 
-    if ( isFunction(callback) ) {
-      return this.then(
-        (value, scope) => constructor.resolve(callback({value, status: 'fulfilled'}, scope)).then(() => value),
-        (reason, scope) => constructor.resolve(callback({reason, status: 'rejected'}, scope)).then(() => { throw reason; }));
-    }
-
-    return this.then(callback, callback);
+    return isFunction(callback) ? this.then(
+      (value, scope) => constructor.resolve(callback({value, status: 'fulfilled'}, scope)).then(() => value),
+      (reason, scope) => constructor.resolve(callback({reason, status: 'rejected'}, scope)).then(() => {
+        throw reason;
+      })) : this.then(callback, callback);
   }
 
   static allSettled(promises) {
