@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "mocha ./test/specs",
-    "test:coverage": "c8 npm run test",
+    "test:coverage": "c8 --reporter=lcov --reporter=text npm run test",
     "test:build:version": "node ./bin/check-build-version.js",
     "coverage:report": "c8 report",
     "coveralls": "c8 report --reporter=text-lcov | coveralls",
