@@ -1,8 +1,4 @@
-// AxiosPromise v0.0.5 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
-'use strict';
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
+// AxiosPromise v0.0.6 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
 const {
   hasOwn = (({hasOwnProperty}) => (obj, prop) => hasOwnProperty.call(obj, prop))(Object.prototype)
 } = Object;
@@ -344,7 +340,7 @@ const _AbortController = hasNativeSupport ? AbortController : class AbortControl
   }
 };
 
-const VERSION = "0.0.5";
+const VERSION = "0.0.6";
 
 const {isGenerator, isGeneratorFunction, isFunction, lazyBind, asap, defineConstants, symbols, isAbortSignal} = utils;
 
@@ -990,12 +986,11 @@ lazyBind(prototype, ['cancel', 'onCancel', 'signal']);
 lazyBind(AxiosPromise,['delay', 'promisify']);
 
 defineConstants(AxiosPromise, {
-  VERSION
-});
-
-defineConstants(prototype, {
+  VERSION,
+  AbortController: _AbortController,
+  AbortSignal: _AbortSignal,
   CanceledError,
-  TimeoutError
+  TimeoutError,
 });
 
 class AxiosPromiseSync extends AxiosPromise {
@@ -1006,10 +1001,5 @@ class AxiosPromiseSync extends AxiosPromise {
 
 AxiosPromiseSync.prototype[kSync] = true;
 
-exports.AbortController = _AbortController;
-exports.AbortSignal = _AbortSignal;
-exports.AxiosPromise = AxiosPromise;
-exports.AxiosPromiseSync = AxiosPromiseSync;
-exports.EventEmitter = EventEmitter;
-exports.utils = utils;
-//# sourceMappingURL=axios-promise.cjs.map
+export { _AbortController as AbortController, _AbortSignal as AbortSignal, AxiosPromise, AxiosPromiseSync, EventEmitter, AxiosPromise as default, utils };
+//# sourceMappingURL=axios-promise.js.map
