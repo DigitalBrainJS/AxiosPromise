@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.0.6](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.0.5...v0.0.6) (2023-02-26)
+
+
+### Bug Fixes
+
+* **package:** fixed module entry points; ([#13](https://github.com/DigitalBrainJS/AxiosPromise/issues/13)) ([269d145](https://github.com/DigitalBrainJS/AxiosPromise/commit/269d145834753ccac998962701fd34e1b30d6cd5))
+
+### Contributors to this release
+
+- Dmitriy Mozgovoy
+
 ## [0.0.5](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.0.4...v0.0.5) (2023-02-23)
 
 
