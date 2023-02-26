@@ -32,6 +32,32 @@ interface PromisifyOptions {
     scopeArg?: boolean;
 }
 
+type EventName = string|symbol;
+
+type RawEvents = Record<EventName, Function|Function[]|null>
+
+export class EventEmitter {
+    constructor(events?: RawEvents);
+    on(event: EventName, listener: Function, prepend: boolean): this;
+    addEventListener(event: EventName, listener: Function, prepend: boolean): this;
+    off(event: EventName, listener: Function): boolean;
+    removeEventListener(event: EventName, listener: Function): boolean;
+    emit(event: EventName, ...args: any): boolean;
+    once(event: EventName, listener: Function, prepend: boolean): this;
+    listenerCount(event: EventName): number;
+}
+
+export class AbortSignal {
+    readonly aborted: boolean;
+    addEventListener(event: EventName, listener: Function): void;
+    removeEventListener(event: EventName, listener: Function): void;
+}
+
+export class AbortController {
+    readonly signal: AbortSignal;
+    abort(reason: any): void;
+}
+
 export class CanceledError extends Error {
     constructor(message?: string);
     readonly name: string;

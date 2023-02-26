@@ -5,7 +5,6 @@ Lightweight Promises/A+ compatible implementation with cancellation, sync mode, 
 <div align="center">
 
 [![npm version](https://img.shields.io/npm/v/axios-promise.svg?style=flat-square)](https://www.npmjs.org/package/axios-promise)
-[![CDNJS](https://img.shields.io/cdnjs/v/axios-promise.svg?style=flat-square)](https://cdnjs.com/libraries/axios-promise)
 [![Build status](https://img.shields.io/github/actions/workflow/status/digitalbrainjs/axiospromise/ci.yml?branch=master&label=CI&logo=github&style=flat-square)](https://github.com/digitalbrainjs/axios-promise/actions/workflows/ci.yml)
 [![Coverage Status](https://coveralls.io/repos/github/DigitalBrainJS/AxiosPromise/badge.svg?branch=master)](https://coveralls.io/github/DigitalBrainJS/AxiosPromise?branch=master)
 [![npm bundle size](https://img.shields.io/bundlephobia/minzip/axios-promise?style=flat-square)](https://bundlephobia.com/package/axios-promise@latest)
@@ -27,7 +26,7 @@ import {AxiosPromise, AxiosPromiseSync} from 'axios-promise';
 
 ## Basic Examples
 
-See [Live Playground](https://codesandbox.io/s/tender-pond-wy5ujx?file=/src/index.js)
+See [Live Playground](https://codesandbox.io/s/tender-pond-wy5ujx?file=/src/index.js) ([Version for Node](https://codesandbox.io/p/sandbox/quiet-sunset-km5o2b))
 
 ```js
 function cancelableFetch(url) {

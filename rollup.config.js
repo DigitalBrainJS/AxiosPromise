@@ -3,7 +3,6 @@ import commonjs from '@rollup/plugin-commonjs';
 import {terser} from "rollup-plugin-terser";
 import json from '@rollup/plugin-json';
 import { babel } from '@rollup/plugin-babel';
-import autoExternal from 'rollup-plugin-auto-external';
 import bundleSize from 'rollup-plugin-bundle-size'
 import path from 'path';
 
@@ -57,11 +56,11 @@ export default async () => {
   const banner = `// AxiosPromise v${lib.version} Copyright (c) ${year} ${lib.author} and contributors`;
 
   return [
-    // ESM bundle for CDN
+    // ESM bundle for browser/CDN
     ...buildConfig({
       input: namedInput,
       output: {
-        file: `dist/${outputFileName}.mjs`,
+        file: `dist/esm/${outputFileName}.js`,
         format: "esm",
         preferConst: true,
         exports: "named",
@@ -69,34 +68,16 @@ export default async () => {
       }
     }),
 
-    // UMD bundle for CDN
-/*    ...buildConfig({
+    // CJS bundle
+    ...buildConfig({
       input: namedInput,
-      es5: true,
       output: {
-        file: `dist/${outputFileName}.js`,
+        file: `dist/cjs/${outputFileName}.js`,
         name,
-        format: "umd",
+        format: "cjs",
         exports: "named",
         banner
       }
-    }),*/
-
-    // Node.js commonjs bundle
-    {
-      input: namedInput,
-      output: {
-        file: `dist/${outputFileName}.cjs`,
-        format: "cjs",
-        preferConst: true,
-        exports: "named",
-        banner
-      },
-      plugins: [
-        autoExternal(),
-        resolve(),
-        commonjs()
-      ]
-    }
+    }),
   ]
 };
