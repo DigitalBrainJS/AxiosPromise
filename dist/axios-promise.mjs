@@ -1,4 +1,4 @@
-// AxiosPromise v0.0.3 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
+// AxiosPromise v0.0.5 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
 const {
   hasOwn = (({hasOwnProperty}) => (obj, prop) => hasOwnProperty.call(obj, prop))(Object.prototype)
 } = Object;
@@ -34,7 +34,10 @@ const _setImmediate = ((setImmediateSupported, postMessageSupported) => {
 const asap$1 = typeof queueMicrotask !== 'undefined' ?
   queueMicrotask : ( typeof process !== 'undefined' && process.nextTick || _setImmediate);
 
-const functionTypeTest = ({constructor}) => (thing) => thing && isFunction$1(thing) && thing.constructor === constructor;
+const functionTypeTest = ({constructor}) => {
+  const {name} = constructor;
+  return (thing) => thing && isFunction$1(thing) && (thing.constructor === constructor || (name && thing.constructor.name === name));
+};
 
 const isGeneratorFunction$1 = functionTypeTest(function* () {});
 
@@ -337,7 +340,7 @@ const _AbortController = hasNativeSupport ? AbortController : class AbortControl
   }
 };
 
-const VERSION = "0.0.3";
+const VERSION = "0.0.5";
 
 const {isGenerator, isGeneratorFunction, isFunction, lazyBind, asap, defineConstants, symbols, isAbortSignal} = utils;
 
@@ -365,7 +368,6 @@ const [
   kCanceledWith,
   kUncaught,
   kTag,
-  kUnhandledRejection,
   kTimer
 ] = symbols(
   'state',
@@ -389,7 +391,6 @@ const [
   'canceledWith',
   'uncaught',
   'tag',
-  'unhandledRejection',
   'timer'
 );
 
@@ -656,7 +657,7 @@ class AxiosPromise{
       if (uncaughtCallbacks) {
         uncaughtCallbacks !== noop && invokeCallbacks(uncaughtCallbacks, [value]);
       } else if (hasConsole && this[kAtomic] !== ATOMIC_MODE_DETACHED) {
-        this.constructor[kUnhandledRejection](value);
+        this.constructor._unhandledRejection(value);
       }
     }
 
@@ -949,7 +950,7 @@ class AxiosPromise{
     return promise;
   }
 
-  static [kUnhandledRejection](reason) {
+  static _unhandledRejection(reason) {
     const source = this[kTag] ? ` @ ${this[kTag]}` : '';
     console.warn(`Unhandled AxiosPromise Rejection${source}:`, reason);
   }
