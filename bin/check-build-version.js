@@ -1,7 +1,7 @@
 import fs from 'fs';
 import assert from 'assert';
 import {AxiosPromise} from '../lib/index.js';
-import {AxiosPromise as AxiosPromiseBuild} from '../dist/axios-promise.cjs';
+import {AxiosPromise as AxiosPromiseBuild} from '../dist/cjs/axios-promise.js';
 
 const {version} = JSON.parse(fs.readFileSync('./package.json'));
 
