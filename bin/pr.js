@@ -68,9 +68,10 @@ const generateBody = async ({files, template = './templates/pr.hbs'} = {}) => {
 
 console.log(await generateBody({
   files: {
-    'Minified build (ESM)' : './dist/axios-promise.min.mjs',
-    'ESM build' : './dist/axios-promise.mjs',
-    'CommonJS build' : './dist/axios-promise.cjs'
+    'Minified build (ESM)' : './dist/esm/axios-promise.min.js',
+    'ESM build' : './dist/esm/axios-promise.js',
+    'Minified build (CommonJS)' : './dist/cjs/axios-promise.min.js',
+    'CommonJS build' : './dist/cjs/axios-promise.js'
   }
 }));
 
