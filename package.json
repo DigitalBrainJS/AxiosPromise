@@ -25,8 +25,12 @@
         "require": "./index.d.cts",
         "default": "./index.d.ts"
       },
+      "browser": {
+        "require": "./dist/cjs/axios-promise.js",
+        "default": "./dist/esm/axios-promise.js"
+      },
       "default": {
-        "require": "./dist/axios-promise.cjs",
+        "require": "./dist/cjs/axios-promise.js",
         "default": "./lib/index.js"
       }
     },
@@ -51,8 +55,6 @@
   "author": "Dmitriy Mozgovoy",
   "license": "MIT",
   "typings": "./index.d.ts",
-  "jsdelivr": "./dist/axios-promise.min.mjs",
-  "unpkg": "./dist/axios-promise.min.mjs",
   "bugs": {
     "url": "https://github.com/DigitalBrainJS/AxiosPromise/issues"
   },
