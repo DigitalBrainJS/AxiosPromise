@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.0.7](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.0.6...v0.0.7) (2023-03-10)
+
+
+### Bug Fixes
+
+* **exports:** export utils; ([#18](https://github.com/DigitalBrainJS/AxiosPromise/issues/18)) ([61681cc](https://github.com/DigitalBrainJS/AxiosPromise/commit/61681cc0f320ab0c27f773ec3c887446e869732c))
+
+### Contributors to this release
+
+- Dmitriy Mozgovoy
+
 ## [0.0.6](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.0.5...v0.0.6) (2023-02-26)
 
 

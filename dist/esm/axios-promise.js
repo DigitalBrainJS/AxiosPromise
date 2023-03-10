@@ -1,4 +1,4 @@
-// AxiosPromise v0.0.6 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
+// AxiosPromise v0.0.7 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
 const {
   hasOwn = (({hasOwnProperty}) => (obj, prop) => hasOwnProperty.call(obj, prop))(Object.prototype)
 } = Object;
@@ -41,13 +41,13 @@ const functionTypeTest = ({constructor}) => {
 
 const isGeneratorFunction$1 = functionTypeTest(function* () {});
 
-const isAsyncFunction = functionTypeTest(async () => {});
+const isAsyncFunction$1 = functionTypeTest(async () => {});
 
-const isPlainFunction = functionTypeTest(() => {});
+const isPlainFunction$1 = functionTypeTest(() => {});
 
 const isGenerator$1 = (obj) => obj && isFunction$1(obj.next) && isFunction$1(obj.throw);
 
-const isContextDefined = (context) => context != null && context !== _global;
+const isContextDefined$1 = (context) => context != null && context !== _global;
 
 const lazyBind$1 = (obj, props, {bindMethods = true} = {}) => {
   const symbols = {};
@@ -73,7 +73,7 @@ const lazyBind$1 = (obj, props, {bindMethods = true} = {}) => {
         const boundContext = this;
 
         return this[symbol] = bindMethods && isFunction$1(resolvedValue) ? function () {
-          return resolvedValue.apply(isContextDefined(this) ? this : boundContext, arguments);
+          return resolvedValue.apply(isContextDefined$1(this) ? this : boundContext, arguments);
         } : resolvedValue;
       },
 
@@ -109,7 +109,7 @@ const isAbortSignal$1 = (thing) => {
     isFunction$1(thing.removeEventListener);
 };
 
-const isAbortController = (thing) => {
+const isAbortController$1 = (thing) => {
   return thing && typeof thing === 'object' && isFunction$1(thing.abort) && isAbortSignal$1(thing.signal);
 };
 
@@ -126,16 +126,17 @@ const utils = {
   setImmediate: _setImmediate,
   asap: asap$1,
   isGeneratorFunction: isGeneratorFunction$1,
-  isAsyncFunction,
-  isPlainFunction,
+  isFunction: isFunction$1,
+  isAsyncFunction: isAsyncFunction$1,
+  isPlainFunction: isPlainFunction$1,
   functionTypeTest,
-  isContextDefined,
+  isContextDefined: isContextDefined$1,
   hasOwn,
   lazyBind: lazyBind$1,
   isGenerator: isGenerator$1,
   defineConstants: defineConstants$1,
   isAbortSignal: isAbortSignal$1,
-  isAbortController,
+  isAbortController: isAbortController$1,
   symbols: symbols$1
 };
 
@@ -340,9 +341,24 @@ const _AbortController = hasNativeSupport ? AbortController : class AbortControl
   }
 };
 
-const VERSION = "0.0.6";
+const VERSION = "0.0.7";
 
-const {isGenerator, isGeneratorFunction, isFunction, lazyBind, asap, defineConstants, symbols, isAbortSignal} = utils;
+const {
+  isGenerator,
+  isFunction,
+  isGeneratorFunction,
+  isAsyncFunction,
+  isPlainFunction,
+  isContextDefined,
+  lazyBind,
+  defineConstants,
+  symbols,
+  isAbortSignal,
+  global: global$1,
+  setImmediate: setImmediate$1,
+  isAbortController,
+  asap
+} = utils;
 
 const kPromiseSign = Symbol.for('AxiosPromise');
 
@@ -1001,5 +1017,5 @@ class AxiosPromiseSync extends AxiosPromise {
 
 AxiosPromiseSync.prototype[kSync] = true;
 
-export { _AbortController as AbortController, _AbortSignal as AbortSignal, AxiosPromise, AxiosPromiseSync, EventEmitter, AxiosPromise as default, utils };
+export { _AbortController as AbortController, _AbortSignal as AbortSignal, AxiosPromise, AxiosPromiseSync, EventEmitter, asap, AxiosPromise as default, defineConstants, global$1 as global, isAbortController, isAbortSignal, isAsyncFunction, isContextDefined, isGenerator, isGeneratorFunction, isPlainFunction, lazyBind, setImmediate$1 as setImmediate, symbols };
 //# sourceMappingURL=axios-promise.js.map
