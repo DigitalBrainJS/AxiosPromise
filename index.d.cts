@@ -135,4 +135,18 @@ declare namespace AxiosPromise {
 
     class AxiosPromiseSync<R> extends AxiosPromise <R> {
     }
+
+    function isGenerator(thing:any): boolean;
+    function isGeneratorFunction(thing:any): boolean;
+    function isAsyncFunction(thing:any): boolean;
+    function isPlainFunction(thing:any): boolean;
+    function isAbortSignal(thing:any): boolean;
+    function isAbortController(thing:any): boolean;
+    function isContextDefined(context:any): boolean;
+    function lazyBind(obj: object, props: Record<symbol|string, any>, options: {bindMethods: boolean}): boolean;
+    function defineConstants(obj: object, props: Record<symbol|string, any>, options: {configurable: boolean, enumerable: boolean}): void;
+    function setImmediate(handler: ()=> void): void;
+    function asap(handler: ()=> void): void;
+    function symbols(...names: string[]): IterableIterator<symbol>;
+    const global: object;
 }

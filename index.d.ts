@@ -113,3 +113,17 @@ export class AxiosPromise <R> implements Thenable <R> {
 }
 
 export class AxiosPromiseSync <R> extends AxiosPromise <R> {}
+
+export function isGenerator(thing:any): boolean;
+export function isGeneratorFunction(thing:any): boolean;
+export function isAsyncFunction(thing:any): boolean;
+export function isPlainFunction(thing:any): boolean;
+export function isAbortSignal(thing:any): boolean;
+export function isAbortController(thing:any): boolean;
+export function isContextDefined(context:any): boolean;
+export function lazyBind(obj: object, props: Record<symbol|string, any>, options: {bindMethods: boolean}): boolean;
+export function defineConstants(obj: object, props: Record<symbol|string, any>, options: {configurable: boolean, enumerable: boolean}): void;
+export function setImmediate(handler: ()=> void): void;
+export function asap(handler: ()=> void): void;
+export function symbols(...names: string[]): IterableIterator<symbol>;
+export const global: object;
