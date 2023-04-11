@@ -26,7 +26,7 @@ import {AxiosPromise, AxiosPromiseSync} from 'axios-promise';
 
 ## Basic Examples
 
-See [Live Playground](https://codesandbox.io/s/tender-pond-wy5ujx?file=/src/index.js) ([Version for Node](https://codesandbox.io/p/sandbox/quiet-sunset-km5o2b))
+See [Live Playground](https://playcode.io/1411507) ([Version for Node](https://codesandbox.io/p/sandbox/quiet-sunset-km5o2b))
 
 ```js
 function cancelableFetch(url) {
@@ -99,7 +99,7 @@ const p = requestJSON('http://httpbin.org/get');
 
     ```js
     const controller = new AbortController();
-    AxiosPromise.delay(1000).listen(controller).then(console.log, console.warn);
+    AxiosPromise.delay(1000).listen(controller.signal).then(console.log, console.warn);
     setTimeout(() => controller.abort(), 100);
     ```
 
