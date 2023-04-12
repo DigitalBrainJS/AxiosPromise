@@ -77,14 +77,14 @@ declare namespace AxiosPromise {
     }
 
     class AxiosPromise<R> implements Thenable <R> {
-        constructor(callback: (resolve: (value?: R | Thenable<R>) => void, reject: (error?: any) => void) => void, options?: AxiosPromiseOptions);
+        constructor(callback: (resolve: (value?: R | Thenable<R>) => void, reject: (error?: any) => void, scope: AxiosPromise<R>) => void, options?: AxiosPromiseOptions);
 
         then<U>(onFulfilled?: (value: R, scope: AxiosPromise<U>) => U | Thenable<U>, onRejected?: (error: any, scope: AxiosPromise<U>) => U | Thenable<U>): AxiosPromise<U>;
         then<U>(onFulfilled?: (value: R, scope: AxiosPromise<U>) => U | Thenable<U>, onRejected?: (error: any, scope: AxiosPromise<U>) => void): AxiosPromise<U>;
 
         catch<U>(onRejected?: (error: any, scope: AxiosPromise<U>) => U | Thenable<U>): AxiosPromise<U>;
 
-        finally<U = any>(onFinally?: ({value: U, status: SettledStatus}, scope: AxiosPromise<U>) => any | Thenable<any>): AxiosPromise<R>;
+        finally<U = any>(onFinally?: (result: {value: U, status: SettledStatus}, scope: AxiosPromise<U>) => any | Thenable<any>): AxiosPromise<R>;
 
         atomic<U = any>(mode?: AtomicMode): AxiosPromise<U>;
 
