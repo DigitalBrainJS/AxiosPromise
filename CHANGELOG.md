@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.0.8](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.0.7...v0.0.8) (2023-04-12)
+
+
+### Bug Fixes
+
+* **docs:** fixed examples; ([#20](https://github.com/DigitalBrainJS/AxiosPromise/issues/20)) ([9675b84](https://github.com/DigitalBrainJS/AxiosPromise/commit/9675b8459523e15e837b9bb496de9c466a326bc5))
+* **types:** fixed types; ([#21](https://github.com/DigitalBrainJS/AxiosPromise/issues/21)) ([374ca3d](https://github.com/DigitalBrainJS/AxiosPromise/commit/374ca3d69b0deefc0892f6cc27a0071ecb8ccb75))
+
+### Contributors to this release
+
+- Dmitriy Mozgovoy
+
 ## [0.0.7](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.0.6...v0.0.7) (2023-03-10)
 
 

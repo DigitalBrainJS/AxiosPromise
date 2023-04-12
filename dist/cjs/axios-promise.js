@@ -1,4 +1,4 @@
-// AxiosPromise v0.0.7 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
+// AxiosPromise v0.0.8 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
 'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
@@ -345,7 +345,7 @@ const _AbortController = hasNativeSupport ? AbortController : class AbortControl
   }
 };
 
-const VERSION = "0.0.7";
+const VERSION = "0.0.8";
 
 const {
   isGenerator,
