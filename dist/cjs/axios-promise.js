@@ -1,4 +1,4 @@
-// AxiosPromise v0.0.5 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
+// AxiosPromise v0.0.8 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
 'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
@@ -45,13 +45,13 @@ const functionTypeTest = ({constructor}) => {
 
 const isGeneratorFunction$1 = functionTypeTest(function* () {});
 
-const isAsyncFunction = functionTypeTest(async () => {});
+const isAsyncFunction$1 = functionTypeTest(async () => {});
 
-const isPlainFunction = functionTypeTest(() => {});
+const isPlainFunction$1 = functionTypeTest(() => {});
 
 const isGenerator$1 = (obj) => obj && isFunction$1(obj.next) && isFunction$1(obj.throw);
 
-const isContextDefined = (context) => context != null && context !== _global;
+const isContextDefined$1 = (context) => context != null && context !== _global;
 
 const lazyBind$1 = (obj, props, {bindMethods = true} = {}) => {
   const symbols = {};
@@ -77,7 +77,7 @@ const lazyBind$1 = (obj, props, {bindMethods = true} = {}) => {
         const boundContext = this;
 
         return this[symbol] = bindMethods && isFunction$1(resolvedValue) ? function () {
-          return resolvedValue.apply(isContextDefined(this) ? this : boundContext, arguments);
+          return resolvedValue.apply(isContextDefined$1(this) ? this : boundContext, arguments);
         } : resolvedValue;
       },
 
@@ -113,7 +113,7 @@ const isAbortSignal$1 = (thing) => {
     isFunction$1(thing.removeEventListener);
 };
 
-const isAbortController = (thing) => {
+const isAbortController$1 = (thing) => {
   return thing && typeof thing === 'object' && isFunction$1(thing.abort) && isAbortSignal$1(thing.signal);
 };
 
@@ -125,21 +125,22 @@ const symbols$1 = (...tags) => ({
   }
 });
 
-const utils = {
+var utils = {
   global: _global,
   setImmediate: _setImmediate,
   asap: asap$1,
   isGeneratorFunction: isGeneratorFunction$1,
-  isAsyncFunction,
-  isPlainFunction,
+  isFunction: isFunction$1,
+  isAsyncFunction: isAsyncFunction$1,
+  isPlainFunction: isPlainFunction$1,
   functionTypeTest,
-  isContextDefined,
+  isContextDefined: isContextDefined$1,
   hasOwn,
   lazyBind: lazyBind$1,
   isGenerator: isGenerator$1,
   defineConstants: defineConstants$1,
   isAbortSignal: isAbortSignal$1,
-  isAbortController,
+  isAbortController: isAbortController$1,
   symbols: symbols$1
 };
 
@@ -344,9 +345,24 @@ const _AbortController = hasNativeSupport ? AbortController : class AbortControl
   }
 };
 
-const VERSION = "0.0.5";
+const VERSION = "0.0.8";
 
-const {isGenerator, isGeneratorFunction, isFunction, lazyBind, asap, defineConstants, symbols, isAbortSignal} = utils;
+const {
+  isGenerator,
+  isFunction,
+  isGeneratorFunction,
+  isAsyncFunction,
+  isPlainFunction,
+  isContextDefined,
+  lazyBind,
+  defineConstants,
+  symbols,
+  isAbortSignal,
+  global: global$1,
+  setImmediate: setImmediate$1,
+  isAbortController,
+  asap
+} = utils;
 
 const kPromiseSign = Symbol.for('AxiosPromise');
 
@@ -990,12 +1006,11 @@ lazyBind(prototype, ['cancel', 'onCancel', 'signal']);
 lazyBind(AxiosPromise,['delay', 'promisify']);
 
 defineConstants(AxiosPromise, {
-  VERSION
-});
-
-defineConstants(prototype, {
+  VERSION,
+  AbortController: _AbortController,
+  AbortSignal: _AbortSignal,
   CanceledError,
-  TimeoutError
+  TimeoutError,
 });
 
 class AxiosPromiseSync extends AxiosPromise {
@@ -1011,5 +1026,18 @@ exports.AbortSignal = _AbortSignal;
 exports.AxiosPromise = AxiosPromise;
 exports.AxiosPromiseSync = AxiosPromiseSync;
 exports.EventEmitter = EventEmitter;
-exports.utils = utils;
-//# sourceMappingURL=axios-promise.cjs.map
+exports.asap = asap;
+exports["default"] = AxiosPromise;
+exports.defineConstants = defineConstants;
+exports.global = global$1;
+exports.isAbortController = isAbortController;
+exports.isAbortSignal = isAbortSignal;
+exports.isAsyncFunction = isAsyncFunction;
+exports.isContextDefined = isContextDefined;
+exports.isGenerator = isGenerator;
+exports.isGeneratorFunction = isGeneratorFunction;
+exports.isPlainFunction = isPlainFunction;
+exports.lazyBind = lazyBind;
+exports.setImmediate = setImmediate$1;
+exports.symbols = symbols;
+//# sourceMappingURL=axios-promise.js.map

@@ -128,7 +128,7 @@ const p = requestJSON('http://httpbin.org/get');
 
     ```js
     const controller = new AbortController();
-    AxiosPromise.delay(1000).listen(controller.signal).then(console.log, console.warn);
+    AxiosPromise.delay(1000).listen(controller).then(console.log, console.warn);
     setTimeout(() => controller.abort(), 100);
     ```
 
