@@ -94,7 +94,7 @@ declare namespace AxiosPromise {
 
         cancel(reason?: any): boolean;
 
-        onCancel(reason: CanceledError): void;
+        onCancel(onCancelListener: (reason: CanceledError) => void): void;
 
         readonly signal: GenericAbortSignal;
 
@@ -130,7 +130,7 @@ declare namespace AxiosPromise {
         static readonly CanceledError: typeof CanceledError;
         static readonly TimeoutError: typeof TimeoutError;
 
-        static promisify(thing: GeneratorFunction, options?: PromisifyOptions): boolean;
+        static promisify<U= any>(thing: () => IterableIterator<U | Thenable<U>>, options?: PromisifyOptions): AxiosPromise<U>;
     }
 
     class AxiosPromiseSync<R> extends AxiosPromise <R> {

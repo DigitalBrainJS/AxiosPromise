@@ -85,7 +85,7 @@ export class AxiosPromise <R> implements Thenable <R> {
     timeout<U = any>(ms: number): AxiosPromise<U>;
     listen<U = any>(signal: GenericAbortSignal): AxiosPromise<U>;
     cancel(reason?: any): boolean;
-    onCancel(reason: CanceledError): void;
+    onCancel(onCancelListener: (reason: CanceledError) => void): void;
     readonly signal: GenericAbortSignal;
     static resolve (): AxiosPromise<void>;
     static resolve <R> (value: R | Thenable<R>, options?: AxiosPromiseResolveOptions): AxiosPromise<R>;
@@ -110,6 +110,7 @@ export class AxiosPromise <R> implements Thenable <R> {
     static readonly CanceledError: typeof CanceledError;
     static readonly TimeoutError: typeof TimeoutError;
     static promisify(thing: GeneratorFunction, options?: PromisifyOptions): boolean;
+    static promisify<U= any>(thing: () => IterableIterator<U | Thenable<U>>, options?: PromisifyOptions): AxiosPromise<U>;
 }
 
 export class AxiosPromiseSync <R> extends AxiosPromise <R> {}
