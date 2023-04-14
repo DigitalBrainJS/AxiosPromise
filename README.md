@@ -24,7 +24,36 @@ $ npm install axios-promise
 import {AxiosPromise, AxiosPromiseSync} from 'axios-promise';
 ```
 
+## Intro
+
+`AxiosPromise` is a `Promises/A+` compatible implementation with cancellation API extension, 
+therefore, to start using it, you do not need to additionally learn a new and complex API.
+All you need to know that every promise:
+- has `.cancel([reason])` method
+- has `.onCancel` subscriber for optional aborting long-running asynchronous operation inside a promise 
+
 ## Basic Examples
+
+[Live demo](https://playcode.io/1424670)
+
+```js
+import { AxiosPromise } from 'axios-promise';
+
+const p = new AxiosPromise((resolve, reject, {onCancel}) => {
+  const timer = setTimeout(resolve, 1000, 123);
+  onCancel((reason) => {
+    console.log('clear timer', reason);
+    clearTimeout(timer);
+  });
+}).then(
+  v => console.log(`Done: ${v}`), 
+  e => console.warn(`Fail: ${e}`)
+);
+
+setTimeout(()=> p.cancel(), 500);
+```
+
+Instead of using the plain `onCancel` listener you can subscribe to a `AbortSignal` instance for the same purpose.
 
 See [Live Playground](https://playcode.io/1411507) ([Version for Node](https://codesandbox.io/p/sandbox/quiet-sunset-km5o2b))
 
@@ -99,7 +128,7 @@ const p = requestJSON('http://httpbin.org/get');
 
     ```js
     const controller = new AbortController();
-    AxiosPromise.delay(1000).listen(controller.signal).then(console.log, console.warn);
+    AxiosPromise.delay(1000).listen(controller).then(console.log, console.warn);
     setTimeout(() => controller.abort(), 100);
     ```
 
