@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.0.9](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.0.8...v0.0.9) (2023-04-14)
+
+
+### Bug Fixes
+
+* **types:** fixed types for onCancel listener & promisify decorator; ([#23](https://github.com/DigitalBrainJS/AxiosPromise/issues/23)) ([96dbeba](https://github.com/DigitalBrainJS/AxiosPromise/commit/96dbebaeffcf4256a1f393de66b6bf0e9c9c3744))
+
+### Contributors to this release
+
+- Dmitriy Mozgovoy
+
 ## [0.0.8](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.0.7...v0.0.8) (2023-04-12)
 
 

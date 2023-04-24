@@ -1,4 +1,4 @@
-// AxiosPromise v0.0.8 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
+// AxiosPromise v0.0.9 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
 const {
   hasOwn = (({hasOwnProperty}) => (obj, prop) => hasOwnProperty.call(obj, prop))(Object.prototype)
 } = Object;
@@ -341,7 +341,7 @@ const _AbortController = hasNativeSupport ? AbortController : class AbortControl
   }
 };
 
-const VERSION = "0.0.8";
+const VERSION = "0.0.9";
 
 const {
   isGenerator,
