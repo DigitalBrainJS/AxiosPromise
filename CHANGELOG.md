@@ -1,5 +1,16 @@
 # Changelog
 
+# [0.1.0](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.0.9...v0.1.0) (2023-04-24)
+
+
+### Features
+
+* **executor:** add ability to set onCancel listener by returning it from the executor function; ([#25](https://github.com/DigitalBrainJS/AxiosPromise/issues/25)) ([a200382](https://github.com/DigitalBrainJS/AxiosPromise/commit/a20038241d68e9c84307a241139cc119f9fd2cef))
+
+### Contributors to this release
+
+- Dmitriy Mozgovoy
+
 ## [0.0.9](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.0.8...v0.0.9) (2023-04-14)
 
 
