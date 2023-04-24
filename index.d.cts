@@ -1,5 +1,7 @@
 // TypeScript Version: 4.7
 
+import {CanceledError} from "./index";
+
 export interface Thenable <R> {
     then <U> (onFulfilled?: (value: R) => U | Thenable<U>, onRejected?: (error: any) => U | Thenable<U>): Thenable<U>;
     then <U> (onFulfilled?: (value: R) => U | Thenable<U>, onRejected?: (error: any) => void): Thenable<U>;
@@ -76,8 +78,10 @@ declare namespace AxiosPromise {
         constructor(timeout: number);
     }
 
+    type OnCancelListener = (reason: CanceledError) => void;
+
     class AxiosPromise<R> implements Thenable <R> {
-        constructor(callback: (resolve: (value?: R | Thenable<R>) => void, reject: (error?: any) => void, scope: AxiosPromise<R>) => void, options?: AxiosPromiseOptions);
+        constructor(callback: (resolve: (value?: R | Thenable<R>) => void, reject: (error?: any) => void, scope: AxiosPromise<R>) => void | OnCancelListener, options?: AxiosPromiseOptions);
 
         then<U>(onFulfilled?: (value: R, scope: AxiosPromise<U>) => U | Thenable<U>, onRejected?: (error: any, scope: AxiosPromise<U>) => U | Thenable<U>): AxiosPromise<U>;
         then<U>(onFulfilled?: (value: R, scope: AxiosPromise<U>) => U | Thenable<U>, onRejected?: (error: any, scope: AxiosPromise<U>) => void): AxiosPromise<U>;
@@ -94,7 +98,7 @@ declare namespace AxiosPromise {
 
         cancel(reason?: any): boolean;
 
-        onCancel(onCancelListener: (reason: CanceledError) => void): void;
+        onCancel(onCancelListener: OnCancelListener): void;
 
         readonly signal: GenericAbortSignal;
 

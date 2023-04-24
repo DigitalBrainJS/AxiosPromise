@@ -55,6 +55,27 @@ setTimeout(()=> p.cancel(), 500);
 
 Instead of using the plain `onCancel` listener you can subscribe to a `AbortSignal` instance for the same purpose.
 
+You can also set onCancel handler by returning it from the promise executor function:
+
+[Live demo](https://playcode.io/1449598)
+
+```js
+import { AxiosPromise } from 'axios-promise';
+
+const p = new AxiosPromise((resolve) => {
+  const timer = setTimeout(resolve, 1000, 123);
+  return (reason) => {
+    console.log('clear timer', reason);
+    clearTimeout(timer);
+  };
+}).then(
+  v => console.log(`Done: ${v}`), 
+  e => console.warn(`Fail: ${e}`)
+);
+
+setTimeout(()=> p.cancel(), 500);
+```
+
 See [Live Playground](https://playcode.io/1411507) ([Version for Node](https://codesandbox.io/p/sandbox/quiet-sunset-km5o2b))
 
 ```js

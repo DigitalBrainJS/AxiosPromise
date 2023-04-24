@@ -152,6 +152,37 @@ const assertPromiseStatus = (promise, name = 'promise') => {
         return p;
       });
 
+      it("should support returning onCancel handler from the executor function", async () => {
+        const cancelAfter = 200;
+        const timer = createTimer();
+
+        let invoked = false;
+
+        const p = new PromiseConstructor(() => {
+          return (reason) => {
+            invoked = true;
+
+            if (!AxiosPromise.isCanceledError(reason)) {
+              assert.fail("rejected for reasons other than cancellation");
+            }
+
+            if (timer() < cancelAfter - 10) {
+              assert.fail("early cancellation");
+            }
+          };
+        }).then(() => {
+          assert.fail("not canceled");
+        }, () => {
+          if (!invoked) {
+            assert.fail('onCancel not called');
+          }
+        });
+
+        setTimeout(() => p.cancel(), cancelAfter);
+
+        return p;
+      });
+
       it("should support external AbortSignal", async () => {
         const cancelAfter = 100;
         const timer = createTimer();

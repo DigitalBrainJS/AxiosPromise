@@ -75,8 +75,10 @@ export class TimeoutError extends CanceledError {
     constructor(timeout: number);
 }
 
+type OnCancelListener = (reason: CanceledError) => void;
+
 export class AxiosPromise <R> implements Thenable <R> {
-    constructor (callback: (resolve : (value?: R | Thenable<R>) => void, reject: (error?: any) => void, scope: AxiosPromise<R>) => void, options?: AxiosPromiseOptions);
+    constructor (callback: (resolve : (value?: R | Thenable<R>) => void, reject: (error?: any) => void, scope: AxiosPromise<R>) => void | OnCancelListener, options?: AxiosPromiseOptions);
     then <U> (onFulfilled?: (value: R, scope: AxiosPromise<U>) => U | Thenable<U>, onRejected?: (error: any, scope: AxiosPromise<U>) => U | Thenable<U>): AxiosPromise<U>;
     then <U> (onFulfilled?: (value: R, scope: AxiosPromise<U>) => U | Thenable<U>, onRejected?: (error: any, scope: AxiosPromise<U>) => void): AxiosPromise<U>;
     catch <U> (onRejected?: (error: any, scope: AxiosPromise<U>) => U | Thenable<U>): AxiosPromise<U>;
@@ -85,7 +87,7 @@ export class AxiosPromise <R> implements Thenable <R> {
     timeout<U = any>(ms: number): AxiosPromise<U>;
     listen<U = any>(signal: GenericAbortSignal): AxiosPromise<U>;
     cancel(reason?: any): boolean;
-    onCancel(onCancelListener: (reason: CanceledError) => void): void;
+    onCancel(onCancelListener: OnCancelListener): void;
     readonly signal: GenericAbortSignal;
     static resolve (): AxiosPromise<void>;
     static resolve <R> (value: R | Thenable<R>, options?: AxiosPromiseResolveOptions): AxiosPromise<R>;
