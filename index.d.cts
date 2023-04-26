@@ -134,7 +134,8 @@ declare namespace AxiosPromise {
         static readonly CanceledError: typeof CanceledError;
         static readonly TimeoutError: typeof TimeoutError;
 
-        static promisify<U= any>(thing: () => IterableIterator<U | Thenable<U>>, options?: PromisifyOptions): AxiosPromise<U>;
+        static promisify<TResult = any>(fn: (...args: any) => IterableIterator<TResult | Thenable<TResult>>, options?: PromisifyOptions): () => AxiosPromise<TResult>;
+        static promisify<TResult = any>(fn: (scope: AxiosPromise<TResult>, ...args: any) => IterableIterator<TResult | Thenable<TResult>>, options?: PromisifyOptions): () => AxiosPromise<TResult>;
     }
 
     class AxiosPromiseSync<R> extends AxiosPromise <R> {
