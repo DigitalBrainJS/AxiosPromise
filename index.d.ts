@@ -85,8 +85,8 @@ export class AxiosPromise <R> implements Thenable <R> {
     catch <U> (onRejected?: (error: any, scope: AxiosPromise<U>) => U | Thenable<U>): AxiosPromise<U>;
     finally<U = any> (onFinally?: (result: {value: U, status: SettledStatus}, scope: AxiosPromise<U>) => any | Thenable<any>): AxiosPromise<R>;
     atomic<U = any>(mode?: AtomicMode): AxiosPromise<U>;
-    timeout<U = any>(ms: number): AxiosPromise<U>;
-    listen<U = any>(signal: GenericAbortSignal): AxiosPromise<U>;
+    timeout(ms: number, errorOrMessage?: Error|string|number): AxiosPromise<R>;
+    listen(signal: GenericAbortSignal): AxiosPromise<R>;
     cancel(reason?: any): boolean;
     onCancel(onCancelListener: OnCancelListener): void;
     readonly signal: GenericAbortSignal;
