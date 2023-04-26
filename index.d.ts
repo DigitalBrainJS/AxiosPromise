@@ -59,21 +59,23 @@ export class AbortController {
     abort(reason: any): void;
 }
 
+export type ErrorCode = string | number | symbol;
+
 export class CanceledError extends Error {
-    constructor(message?: string);
+    constructor(message?: string, code?: ErrorCode);
     readonly name: string;
-    readonly code: string;
+    readonly code: ErrorCode;
     readonly scope: AxiosPromise<any>;
     static from(thing: any): CanceledError;
     static isCanceledError(thing: any): boolean;
     static addSignature(target: object): void;
-    static rethrow(err: any, code?: string): void;
-    static init(name: string, code): void;
+    static rethrow(err: any, code?: ErrorCode): void;
+    static init(name: string, code?: ErrorCode): void;
 }
 
 export class TimeoutError extends CanceledError {
-    constructor(message: string);
-    constructor(timeout: number);
+    constructor(message?: string, code?: ErrorCode);
+    constructor(timeout?: number, code?: ErrorCode);
 }
 
 type OnCancelListener = (reason: CanceledError) => void;
