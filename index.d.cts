@@ -92,9 +92,9 @@ declare namespace AxiosPromise {
 
         atomic<U = any>(mode?: AtomicMode): AxiosPromise<U>;
 
-        timeout<U = any>(ms: number): AxiosPromise<U>;
+        timeout(ms: number, errorOrMessage?: Error|string|number): AxiosPromise<R>;
 
-        listen<U = any>(signal: GenericAbortSignal): AxiosPromise<U>;
+        listen(signal: GenericAbortSignal): AxiosPromise<R>;
 
         cancel(reason?: any): boolean;
 
