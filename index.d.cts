@@ -30,6 +30,7 @@ interface AxiosPromiseResolveOptions {
 
 interface PromisifyOptions {
     scopeArg?: boolean;
+    scopeContext?: boolean;
 }
 
 declare namespace AxiosPromise {
@@ -38,6 +39,7 @@ declare namespace AxiosPromise {
     type RawEvents = Record<EventName, Function|Function[]|null>
 
     class EventEmitter {
+        constructor(events?: RawEvents);
         constructor(events?: RawEvents);
         on(event: EventName, listener: Function, prepend: boolean): this;
         addEventListener(event: EventName, listener: Function, prepend: boolean): this;

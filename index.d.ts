@@ -30,6 +30,7 @@ interface AxiosPromiseResolveOptions {
 
 interface PromisifyOptions {
     scopeArg?: boolean;
+    scopeContext?: boolean;
 }
 
 type EventName = string|symbol;
