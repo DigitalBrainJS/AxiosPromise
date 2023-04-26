@@ -421,5 +421,46 @@ const assertPromiseStatus = (promise, name = 'promise') => {
 
     });
   });
+
+  describe('UnhandledRejection', () => {
+    let originalHandler = AxiosPromise._unhandledRejection;
+    let waringShowed = false;
+
+    before(() => {
+      AxiosPromise._unhandledRejection = () => {
+        waringShowed = true;
+      }
+    });
+
+    after(()=> {
+      AxiosPromise._unhandledRejection = originalHandler;
+    });
+
+    afterEach(() => {
+      waringShowed = false
+    });
+
+    it('should show unhandledRejection waring on uncaught chains', async() =>{
+        new AxiosPromise((resolve, reject) =>{
+          setTimeout(reject, 50, new Error('test'))
+        });
+
+        await AxiosPromise.delay(200);
+
+        assert.ok(waringShowed);
+    });
+
+    it('should not show unhandledRejection waring with Promise.resolve', async() =>{
+      const p = new AxiosPromise((resolve, reject) =>{
+        setTimeout(reject, 50, new Error('test'))
+      });
+
+      await assert.rejects(p);
+
+      await AxiosPromise.delay(100);
+
+      assert.strictEqual(waringShowed, false);
+    });
+  });
 });
 
