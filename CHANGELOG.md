@@ -1,5 +1,22 @@
 # Changelog
 
+# [0.3.0](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.2.0...v0.3.0) (2023-04-26)
+
+
+### Bug Fixes
+
+* **core:** fix issue of unwanted unhandledRejection warning in case of late subscription with Promise.resolve; ([#29](https://github.com/DigitalBrainJS/AxiosPromise/issues/29)) ([aed04e7](https://github.com/DigitalBrainJS/AxiosPromise/commit/aed04e7e8c02aaacf0e1bca7adcc5ffb416993d8))
+* **errors:** add missed code argument for TimeoutError constructor; ([#32](https://github.com/DigitalBrainJS/AxiosPromise/issues/32)) ([1a6a004](https://github.com/DigitalBrainJS/AxiosPromise/commit/1a6a0040031dc1a8536bdcf277cfa5b6d46bbd69))
+
+
+### Features
+
+* **errors:** add errorOrMessage argument for timeout method; ([#30](https://github.com/DigitalBrainJS/AxiosPromise/issues/30)) ([671b480](https://github.com/DigitalBrainJS/AxiosPromise/commit/671b48036e12aa9b922317beb1043aafe8ee61d2))
+
+### Contributors to this release
+
+- Dmitriy Mozgovoy
+
 # [0.2.0](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.1.0...v0.2.0) (2023-04-26)
 
 

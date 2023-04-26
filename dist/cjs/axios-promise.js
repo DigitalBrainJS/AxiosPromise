@@ -1,4 +1,4 @@
-// AxiosPromise v0.2.0 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
+// AxiosPromise v0.3.0 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
 'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
@@ -148,15 +148,15 @@ const kInternals$1 = Symbol('internals');
 const kSignature = Symbol.for(`AxiosPromise.CanceledError`);
 
 class CanceledError extends Error {
-  constructor(message) {
+  constructor(message, code) {
     super(message || 'canceled');
-    const {name, code} = this.constructor[kInternals$1];
-    this.name = name;
-    this.code = code;
+    const internal = this.constructor[kInternals$1];
+    this.name = internal.name;
+    this.code = code || internal.code;
   }
 
   static from(thing) {
-    return this.isCanceledError(thing) ? thing : new this(thing instanceof Error ? thing.message : '');
+    return this.isCanceledError(thing) ? thing : new this(thing instanceof Error ? thing.message : thing);
   }
 
   static isCanceledError(err) {
@@ -186,8 +186,8 @@ class CanceledError extends Error {
 CanceledError.init('CanceledError');
 
 class TimeoutError extends CanceledError {
-  constructor(messageOrTimeout) {
-    super(typeof messageOrTimeout === 'number' ? `${messageOrTimeout} ms timeout exceeded` : messageOrTimeout);
+  constructor(messageOrTimeout, code) {
+    super(typeof messageOrTimeout === 'number' ? `${messageOrTimeout} ms timeout exceeded` : messageOrTimeout, code);
   }
 }
 
@@ -345,7 +345,7 @@ const _AbortController = hasNativeSupport ? AbortController : class AbortControl
   }
 };
 
-const VERSION = "0.2.0";
+const VERSION = "0.3.0";
 
 const {
   isGenerator,
@@ -388,7 +388,8 @@ const [
   kCanceledWith,
   kUncaught,
   kTag,
-  kTimer
+  kTimer,
+  kUnhandledFlag
 ] = symbols(
   'state',
   'value',
@@ -411,7 +412,8 @@ const [
   'canceledWith',
   'uncaught',
   'tag',
-  'timer'
+  'timer',
+  'unhandledFlag'
 );
 
 const STATE_PENDING = 0;
@@ -507,7 +509,7 @@ class AxiosPromise{
     }
   }
 
-  timeout(ms) {
+  timeout(ms, errorOrMessage) {
     if (!this[kState]) {
       if (this[kTimer]) {
         clearTimeout(this[kTimer]);
@@ -517,7 +519,7 @@ class AxiosPromise{
       if (ms > 0) {
         this[kTimer] = setTimeout(() => {
           this[kTimer] = 0;
-          this.cancel(new TimeoutError(ms));
+          this.cancel(TimeoutError.from(errorOrMessage || ms));
         }, ms);
       }
     }
@@ -681,7 +683,10 @@ class AxiosPromise{
       if (uncaughtCallbacks) {
         uncaughtCallbacks !== noop && invokeCallbacks(uncaughtCallbacks, [value]);
       } else if (hasConsole && this[kAtomic] !== ATOMIC_MODE_DETACHED) {
-        this.constructor._unhandledRejection(value);
+        this[kUnhandledFlag] = true;
+        asap(() => {
+          this[kUnhandledFlag] && this.constructor._unhandledRejection(value);
+        });
       }
     }
 
@@ -744,6 +749,8 @@ class AxiosPromise{
   then(onFulfilled, onRejected) {
     onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : null;
     onRejected = typeof onRejected === 'function' ? onRejected : null;
+
+    this[kUnhandledFlag] = false;
 
     return new this.constructor(($, $$, promise) => {
       let invoked;
@@ -980,13 +987,15 @@ class AxiosPromise{
   }
 
   static promisify(fn, {scopeArg = false, scopeContext = false} = {}) {
+    if (fn[kPromiseSign]) return fn;
+
     if (!isGeneratorFunction(fn)) {
       throw new TypeError(`value must be a generator function`);
     }
 
     const context = this;
 
-    return function () {
+    const asyncFn = function () {
       return new context((resolve, reject, scope) => {
         let generatorArgs;
         if (scopeArg) {
@@ -998,7 +1007,11 @@ class AxiosPromise{
 
         context[kResolveGenerator](fn.apply(scopeContext || !this || this === global$1 ? scope : this, generatorArgs), scope);
       });
-    }
+    };
+
+    asyncFn[kPromiseSign] = true;
+
+    return asyncFn;
   }
 }
 
