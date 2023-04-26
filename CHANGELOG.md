@@ -1,5 +1,16 @@
 # Changelog
 
+# [0.2.0](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.1.0...v0.2.0) (2023-04-26)
+
+
+### Features
+
+* **scope-context:** add scopeContext option for promisify decorator; ([#27](https://github.com/DigitalBrainJS/AxiosPromise/issues/27)) ([7e50e37](https://github.com/DigitalBrainJS/AxiosPromise/commit/7e50e37dd18f9c45b8e31284b06f4223d3db3664))
+
+### Contributors to this release
+
+- Dmitriy Mozgovoy
+
 # [0.1.0](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.0.9...v0.1.0) (2023-04-24)
 
 
