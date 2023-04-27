@@ -1,4 +1,4 @@
-// AxiosPromise v0.3.0 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
+// AxiosPromise v0.4.0 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
 const {
   hasOwn = (({hasOwnProperty}) => (obj, prop) => hasOwnProperty.call(obj, prop))(Object.prototype)
 } = Object;
@@ -341,7 +341,7 @@ const _AbortController = hasNativeSupport ? AbortController : class AbortControl
   }
 };
 
-const VERSION = "0.3.0";
+const VERSION = "0.4.0";
 
 const {
   isGenerator,
@@ -382,7 +382,6 @@ const [
   kResolveGenerator,
   kAtomic,
   kCanceledWith,
-  kUncaught,
   kTag,
   kTimer,
   kUnhandledFlag
@@ -406,7 +405,6 @@ const [
   'resolveGenerator',
   'atomic',
   'canceledWith',
-  'uncaught',
   'tag',
   'timer',
   'unhandledFlag'
@@ -448,6 +446,37 @@ const invokeCallbacks = (callbacks, args, that) => {
     return !!length;
   }
 };
+
+const [trackUnhandled, untrackUnhandled] = ((trackQueue, length) => {
+  let timer;
+
+  const handler = () => {
+    timer = 0;
+    let l = trackQueue.length;
+    let p;
+    for (let i = 0; i < l; i++) {
+      (p = trackQueue[i]).constructor._unhandledRejection(p[kValue], p);
+    }
+    trackQueue = [];
+  };
+
+  return [(promise) => {
+    trackQueue.push(promise);
+    length++;
+    timer || (timer = setTimeout(handler));
+  }, (promise) => {
+    const index = trackQueue.indexOf(promise);
+    if (index < 0) return;
+    length--;
+    if (!length) {
+      timer && clearTimeout(timer);
+      timer = 0;
+      trackQueue = [];
+    } else {
+      trackQueue.splice(index, 1);
+    }
+  }];
+})([], 0);
 
 class AxiosPromise{
   constructor(executor, {signal, timeout} = {}) {
@@ -540,12 +569,6 @@ class AxiosPromise{
 
   static atomic(chain, mode = ATOMIC_MODE_AWAIT) {
     return this.resolve(chain, {atomic: mode})
-  }
-
-  uncaught(handler = noop) {
-    const appendedHandler = this[kUncaught];
-    this[kUncaught] = appendedHandler && appendedHandler !== noop ? [appendedHandler, handler] : handler;
-    return this;
   }
 
   cancel(reason, forced) {
@@ -675,14 +698,9 @@ class AxiosPromise{
     }
 
     if(isRejected && !hasCallback && !canceled) {
-      const uncaughtCallbacks = this[kUncaught];
-      if (uncaughtCallbacks) {
-        uncaughtCallbacks !== noop && invokeCallbacks(uncaughtCallbacks, [value]);
-      } else if (hasConsole && this[kAtomic] !== ATOMIC_MODE_DETACHED) {
+      if (hasConsole && this[kAtomic] !== ATOMIC_MODE_DETACHED) {
         this[kUnhandledFlag] = true;
-        asap(() => {
-          this[kUnhandledFlag] && this.constructor._unhandledRejection(value);
-        });
+        trackUnhandled(this);
       }
     }
 
@@ -691,7 +709,6 @@ class AxiosPromise{
     this[kCancelCallbacks] = null;
     this[kInnerThenable] = null;
     this[kInternals] = null;
-    this[kUncaught] = null;
     this[kTimer] = null;
   }
 
@@ -746,7 +763,7 @@ class AxiosPromise{
     onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : null;
     onRejected = typeof onRejected === 'function' ? onRejected : null;
 
-    this[kUnhandledFlag] = false;
+    this[kUnhandledFlag] && untrackUnhandled(this);
 
     return new this.constructor(($, $$, promise) => {
       let invoked;
@@ -979,7 +996,7 @@ class AxiosPromise{
 
   static _unhandledRejection(reason) {
     const source = this[kTag] ? ` @ ${this[kTag]}` : '';
-    console.warn(`Unhandled AxiosPromise Rejection${source}:`, reason);
+    console.warn(`Unhandled AxiosPromise Rejection${source}: ` + reason);
   }
 
   static promisify(fn, {scopeArg = false, scopeContext = false} = {}) {

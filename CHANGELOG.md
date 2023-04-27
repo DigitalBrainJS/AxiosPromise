@@ -1,5 +1,16 @@
 # Changelog
 
+# [0.4.0](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.3.0...v0.4.0) (2023-04-27)
+
+
+### Features
+
+* **uncaught-warning:** redesigned logic for tracking unhandled promise rejection; ([#33](https://github.com/DigitalBrainJS/AxiosPromise/issues/33)) ([96b8c38](https://github.com/DigitalBrainJS/AxiosPromise/commit/96b8c3880a97b4c1e969dba59aed5c2a1e8545d8))
+
+### Contributors to this release
+
+- Dmitriy Mozgovoy
+
 # [0.3.0](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.2.0...v0.3.0) (2023-04-26)
 
 
