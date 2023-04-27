@@ -442,10 +442,10 @@ const assertPromiseStatus = (promise, name = 'promise') => {
 
     it('should show unhandledRejection waring on uncaught chains', async() =>{
         new AxiosPromise((resolve, reject) =>{
-          setTimeout(reject, 50, new Error('test'))
+          setTimeout(reject, 0, new Error('test'))
         });
 
-        await AxiosPromise.delay(200);
+        await AxiosPromise.delay(100);
 
         assert.ok(waringShowed);
     });
@@ -456,6 +456,24 @@ const assertPromiseStatus = (promise, name = 'promise') => {
       });
 
       await assert.rejects(p);
+
+      await AxiosPromise.delay(100);
+
+      assert.strictEqual(waringShowed, false);
+    });
+
+    it('should not show unhandledRejection waring with native await consuming', async() =>{
+      const p = new AxiosPromise((resolve, reject) =>{
+        setTimeout(reject, 50, new Error('test'))
+      });
+
+      await (async()=> {
+        try {
+          await p;
+        } catch (err) {
+          assert.strictEqual(err.message, 'test');
+        }
+      })();
 
       await AxiosPromise.delay(100);
 
