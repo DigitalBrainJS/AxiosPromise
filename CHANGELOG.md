@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.4.1](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.4.0...v0.4.1) (2023-04-27)
+
+
+### Bug Fixes
+
+* **core:** do not try to subscribe when the promise is already resolved; ([#35](https://github.com/DigitalBrainJS/AxiosPromise/issues/35)) ([8c04466](https://github.com/DigitalBrainJS/AxiosPromise/commit/8c044663b45234c8c06f237ad37626f574994967))
+
+### Contributors to this release
+
+- Dmitriy Mozgovoy
+
 # [0.4.0](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.3.0...v0.4.0) (2023-04-27)
 
 

@@ -1,4 +1,4 @@
-// AxiosPromise v0.4.0 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
+// AxiosPromise v0.4.1 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
 'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
@@ -345,7 +345,7 @@ const _AbortController = hasNativeSupport ? AbortController : class AbortControl
   }
 };
 
-const VERSION = "0.4.0";
+const VERSION = "0.4.1";
 
 const {
   isGenerator,
@@ -605,19 +605,21 @@ class AxiosPromise{
   }
 
   listen(signal) {
-    if (!isAbortSignal(signal)) {
-      throw TypeError('expected AbortSignal object');
+    if(!this[kFinalized]) {
+      if (!isAbortSignal(signal)) {
+        throw TypeError('expected AbortSignal object');
+      }
+
+      const internals = this[kInternals];
+
+      if (internals.signals) {
+        internals.signals.push(signal);
+      } else {
+        internals.signals = [signal];
+      }
+
+      signal.addEventListener('abort', () => this.cancel());
     }
-
-    const internals = this[kInternals];
-
-    if (internals.signals) {
-      internals.signals.push(signal);
-    } else {
-      internals.signals = [signal];
-    }
-
-    signal.addEventListener('abort', () => this.cancel());
 
     return this;
   }
