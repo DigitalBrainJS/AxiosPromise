@@ -12,9 +12,12 @@ jobs:
   debug:
     runs-on: ubuntu-latest
     steps:
-     - run: echo {{ github.event.pull_request.head.label }}
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: echo "$GITHUB_CONTEXT"
   publish:
-    if: github.event_name == 'workflow_dispatch' || (github.event.pull_request.merged == true && github.event.pull_request.head.label == 'AxiosPromise:release')
+    if: github.event_name == 'workflow_dispatch' || (github.event.pull_request.merged == true && github.event.pull_request.head.label == 'axiospromise:release')
     runs-on: ubuntu-latest
     steps:
       - name: "Release PR info"
