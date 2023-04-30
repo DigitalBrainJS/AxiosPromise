@@ -1,5 +1,16 @@
 # Changelog
 
+# [0.6.0](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.5.0...v0.6.0) (2023-04-30)
+
+
+### Features
+
+* **promisifyAll:** add promisifyAll helper; ([#39](https://github.com/DigitalBrainJS/AxiosPromise/issues/39)) ([a7d07a7](https://github.com/DigitalBrainJS/AxiosPromise/commit/a7d07a718724dfe83b1eb781b402178fb1e19193))
+
+### Contributors to this release
+
+- Dmitriy Mozgovoy
+
 # [0.5.0](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.4.1...v0.5.0) (2023-04-30)
 
 

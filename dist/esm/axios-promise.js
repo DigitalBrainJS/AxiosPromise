@@ -1,4 +1,4 @@
-// AxiosPromise v0.5.0 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
+// AxiosPromise v0.6.0 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
 const {
   hasOwn = (({hasOwnProperty}) => (obj, prop) => hasOwnProperty.call(obj, prop))(Object.prototype)
 } = Object;
@@ -341,7 +341,7 @@ const _AbortController = hasNativeSupport ? AbortController : class AbortControl
   }
 };
 
-const VERSION = "0.5.0";
+const VERSION = "0.6.0";
 
 const {
   isGenerator,
@@ -1033,6 +1033,18 @@ class AxiosPromise{
     asyncFn[kPromiseSign] = true;
 
     return asyncFn;
+  }
+
+  static promisifyAll(obj, {reducer, ...options} = {}) {
+    Object.entries(obj).forEach(([key, value]) => {
+      const descriptor = Object.getOwnPropertyDescriptor(obj, key);
+      let ret;
+      'value' in descriptor && (!reducer || (ret = reducer.call(obj, key, value))) && isGeneratorFunction(value) &&
+      Object.defineProperty(obj, ret && typeof key ==='string' ? ret : key, {
+        ...descriptor,
+        value: this.promisify(value, options)
+      });
+    });
   }
 }
 
