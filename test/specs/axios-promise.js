@@ -480,5 +480,35 @@ const assertPromiseStatus = (promise, name = 'promise') => {
       assert.strictEqual(waringShowed, false);
     });
   });
+
+  describe('promisifyAll', () => {
+    it('should decorate all Generator functions to async function that uses custom Promise constructor', async () => {
+      const obj = {
+        *foo(v) {
+          return v;
+        }
+      };
+
+      PromiseConstructor.promisifyAll(obj);
+
+      const ret = obj.foo(123);
+      assert.ok(ret instanceof PromiseConstructor);
+      assert.strictEqual(await ret, 123);
+    });
+
+    it('should support reducer option', async () => {
+      const obj = {
+        *foo(v) {
+          return v;
+        }
+      };
+
+      PromiseConstructor.promisifyAll(obj, {reducer: (k) => k +'Async'});
+
+      const ret = obj.fooAsync(123);
+      assert.ok(ret instanceof PromiseConstructor);
+      assert.strictEqual(await ret, 123);
+    });
+  })
 });
 

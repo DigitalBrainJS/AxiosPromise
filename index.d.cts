@@ -34,6 +34,10 @@ interface PromisifyOptions {
     passthrough?: boolean;
 }
 
+interface PromisifyAllOptions extends PromisifyOptions {
+    reducer?: (this: object, key: string | symbol, value: any) => string | boolean | undefined
+}
+
 declare namespace AxiosPromise {
     type EventName = string|symbol;
 
@@ -141,6 +145,7 @@ declare namespace AxiosPromise {
 
         static promisify<TResult = any>(fn: (...args: any) => IterableIterator<TResult | Thenable<TResult>>, options?: PromisifyOptions): () => AxiosPromise<TResult>;
         static promisify<TResult = any>(fn: (scope: AxiosPromise<TResult>, ...args: any) => IterableIterator<TResult | Thenable<TResult>>, options?: PromisifyOptions): () => AxiosPromise<TResult>;
+        static promisifyAll(obj: object, options?: PromisifyAllOptions): void;
     }
 
     class AxiosPromiseSync<R = any> extends AxiosPromise <R> {
