@@ -1,4 +1,4 @@
-// AxiosPromise v0.4.1 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
+// AxiosPromise v0.5.0 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
 const {
   hasOwn = (({hasOwnProperty}) => (obj, prop) => hasOwnProperty.call(obj, prop))(Object.prototype)
 } = Object;
@@ -341,7 +341,7 @@ const _AbortController = hasNativeSupport ? AbortController : class AbortControl
   }
 };
 
-const VERSION = "0.4.1";
+const VERSION = "0.5.0";
 
 const {
   isGenerator,
@@ -1001,10 +1001,16 @@ class AxiosPromise{
     console.warn(`Unhandled AxiosPromise Rejection${source}: ` + reason);
   }
 
-  static promisify(fn, {scopeArg = false, scopeContext = false} = {}) {
-    if (fn[kPromiseSign]) return fn;
+  static promisify(fn, {scopeArg = false, scopeContext = false, passthrough = true} = {}) {
+    if (fn && fn[kPromiseSign]) return fn;
 
     if (!isGeneratorFunction(fn)) {
+      if (passthrough) {
+        if (!isFunction(fn)) {
+          throw TypeError('value must be a function');
+        }
+        return fn;
+      }
       throw new TypeError(`value must be a generator function`);
     }
 

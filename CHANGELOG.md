@@ -1,5 +1,16 @@
 # Changelog
 
+# [0.5.0](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.4.1...v0.5.0) (2023-04-30)
+
+
+### Features
+
+* **promisify:** add passthrough option; ([#37](https://github.com/DigitalBrainJS/AxiosPromise/issues/37)) ([579ecce](https://github.com/DigitalBrainJS/AxiosPromise/commit/579ecce22203f181fe847ad0455cff39883a2222))
+
+### Contributors to this release
+
+- Dmitriy Mozgovoy
+
 ## [0.4.1](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.4.0...v0.4.1) (2023-04-27)
 
 
