@@ -75,7 +75,7 @@ declare namespace AxiosPromise {
         readonly scope: AxiosPromise<any>;
         static from(thing: any): CanceledError;
         static isCanceledError(thing: any): boolean;
-        static addSignature(target: object): void;
+        static addSignatureTo(target: object): void;
         static rethrow(err: any, code?: ErrorCode): void;
         static init(name: string, code?: ErrorCode): void;
     }
