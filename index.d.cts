@@ -158,8 +158,8 @@ declare namespace AxiosPromise {
     function isAbortSignal(thing:any): boolean;
     function isAbortController(thing:any): boolean;
     function isContextDefined(context:any): boolean;
-    function lazyBind(obj: object, props: Record<symbol|string, any>, options: {bindMethods: boolean}): boolean;
-    function defineConstants(obj: object, props: Record<symbol|string, any>, options: {configurable: boolean, enumerable: boolean}): void;
+    function lazyBind(obj: object, props: Record<symbol|string, any>, options?: {bindMethods?: boolean}): boolean;
+    function defineConstants(obj: object, props: Record<symbol|string, any>, options?: {configurable?: boolean, enumerable?: boolean}): void;
     function setImmediate(handler: ()=> void): void;
     function asap(handler: ()=> void): void;
     function symbols(...names: string[]): IterableIterator<symbol>;
