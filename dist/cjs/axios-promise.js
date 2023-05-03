@@ -1,4 +1,4 @@
-// AxiosPromise v0.6.0 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
+// AxiosPromise v0.7.0 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
 'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
@@ -163,7 +163,7 @@ class CanceledError extends Error {
     return !!(err && err[kSignature]);
   }
 
-  static addSignature(constructor) {
+  static addSignatureTo(constructor) {
     typeof constructor === 'function' && (constructor.prototype[kSignature] = this[kInternals$1].code);
   }
 
@@ -179,7 +179,7 @@ class CanceledError extends Error {
       code: code || 'ERR_' + name.toUpperCase().replace(/ERROR$/, '')
     };
 
-    this.addSignature(this);
+    this.addSignatureTo(this);
   }
 }
 
@@ -345,7 +345,7 @@ const _AbortController = hasNativeSupport ? AbortController : class AbortControl
   }
 };
 
-const VERSION = "0.6.0";
+const VERSION = "0.7.0";
 
 const {
   isGenerator,
@@ -954,7 +954,7 @@ class AxiosPromise{
   static delay(ms, value) {
     return new this((resolve, _, {onCancel})=> {
       const timer = setTimeout(resolve, ms, value);
-      onCancel(()=> clearTimeout(timer));
+      onCancel(() => clearTimeout(timer));
     });
   }
 
@@ -1079,7 +1079,9 @@ exports.AbortController = _AbortController;
 exports.AbortSignal = _AbortSignal;
 exports.AxiosPromise = AxiosPromise;
 exports.AxiosPromiseSync = AxiosPromiseSync;
+exports.CanceledError = CanceledError;
 exports.EventEmitter = EventEmitter;
+exports.TimeoutError = TimeoutError;
 exports.asap = asap;
 exports["default"] = AxiosPromise;
 exports.defineConstants = defineConstants;

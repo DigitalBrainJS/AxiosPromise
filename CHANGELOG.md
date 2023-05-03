@@ -1,5 +1,21 @@
 # Changelog
 
+# [0.7.0](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.6.0...v0.7.0) (2023-05-03)
+
+
+### Bug Fixes
+
+* **export:** added missed CanceledError and TimeoutError ESM export; ([#41](https://github.com/DigitalBrainJS/AxiosPromise/issues/41)) ([bc051d1](https://github.com/DigitalBrainJS/AxiosPromise/commit/bc051d135d740ee5d57086d5753b21d117878562))
+
+
+### Features
+
+* **refactor:** rename addSignature method to addSignatureTo; ([#43](https://github.com/DigitalBrainJS/AxiosPromise/issues/43)) ([e78e6e4](https://github.com/DigitalBrainJS/AxiosPromise/commit/e78e6e46d88e7b143f87eb5658254cc20701add1))
+
+### Contributors to this release
+
+- Dmitriy Mozgovoy
+
 # [0.6.0](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.5.0...v0.6.0) (2023-04-30)
 
 
