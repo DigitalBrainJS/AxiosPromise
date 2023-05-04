@@ -30,36 +30,72 @@ interface AxiosPromiseResolveOptions {
 
 interface PromisifyOptions {
     scopeArg?: boolean;
+    scopeContext?: boolean;
+    passthrough?: boolean;
 }
 
+interface PromisifyAllOptions extends PromisifyOptions {
+    reducer?: (this: object, key: string | symbol, value: any) => string | boolean | undefined
+}
+
+type EventName = string|symbol;
+
+type RawEvents = Record<EventName, Function|Function[]|null>
+
+export class EventEmitter {
+    constructor(events?: RawEvents);
+    on(event: EventName, listener: Function, prepend: boolean): this;
+    addEventListener(event: EventName, listener: Function, prepend: boolean): this;
+    off(event: EventName, listener: Function): boolean;
+    removeEventListener(event: EventName, listener: Function): boolean;
+    emit(event: EventName, ...args: any): boolean;
+    once(event: EventName, listener: Function, prepend: boolean): this;
+    listenerCount(event: EventName): number;
+}
+
+export class AbortSignal {
+    readonly aborted: boolean;
+    addEventListener(event: EventName, listener: Function): void;
+    removeEventListener(event: EventName, listener: Function): void;
+}
+
+export class AbortController {
+    readonly signal: AbortSignal;
+    abort(reason: any): void;
+}
+
+export type ErrorCode = string | number | symbol;
+
 export class CanceledError extends Error {
-    constructor(message?: string);
+    constructor(message?: string, code?: ErrorCode);
     readonly name: string;
-    readonly code: string;
+    readonly code: ErrorCode;
     readonly scope: AxiosPromise<any>;
     static from(thing: any): CanceledError;
     static isCanceledError(thing: any): boolean;
-    static addSignature(target: object): void;
-    static rethrow(err: any, code?: string): void;
-    static init(name: string, code): void;
+    static addSignatureTo(target: object): void;
+    static rethrow(err: any, code?: ErrorCode): void;
+    static init(name: string, code?: ErrorCode): void;
 }
 
 export class TimeoutError extends CanceledError {
-    constructor(message: string);
-    constructor(timeout: number);
+    constructor(message?: string, code?: ErrorCode);
+    constructor(timeout?: number, code?: ErrorCode);
 }
 
-export class AxiosPromise <R> implements Thenable <R> {
-    constructor (callback: (resolve : (value?: R | Thenable<R>) => void, reject: (error?: any) => void) => void, options?: AxiosPromiseOptions);
+type OnCancelListener = (reason: CanceledError) => void;
+
+export class AxiosPromise <R = any> implements Thenable <R> {
+    constructor (callback: (resolve : (value?: R | Thenable<R>) => void, reject: (error?: any) => void, scope: AxiosPromise<R>) => void | OnCancelListener, options?: AxiosPromiseOptions);
     then <U> (onFulfilled?: (value: R, scope: AxiosPromise<U>) => U | Thenable<U>, onRejected?: (error: any, scope: AxiosPromise<U>) => U | Thenable<U>): AxiosPromise<U>;
     then <U> (onFulfilled?: (value: R, scope: AxiosPromise<U>) => U | Thenable<U>, onRejected?: (error: any, scope: AxiosPromise<U>) => void): AxiosPromise<U>;
     catch <U> (onRejected?: (error: any, scope: AxiosPromise<U>) => U | Thenable<U>): AxiosPromise<U>;
-    finally<U = any> (onFinally?: ({value: U, status: SettledStatus}, scope: AxiosPromise<U>) => any | Thenable<any>): AxiosPromise<R>;
+    finally<U = any> (onFinally?: (result: {value: U, status: SettledStatus}, scope: AxiosPromise<U>) => any | Thenable<any>): AxiosPromise<R>;
     atomic<U = any>(mode?: AtomicMode): AxiosPromise<U>;
-    timeout<U = any>(ms: number): AxiosPromise<U>;
-    listen<U = any>(signal: GenericAbortSignal): AxiosPromise<U>;
+    timeout(ms: number, errorOrMessage?: Error|string|number): AxiosPromise<R>;
+    listen(signal: GenericAbortSignal): AxiosPromise<R>;
     cancel(reason?: any): boolean;
-    onCancel(reason: CanceledError): void;
+    onCancel(onCancelListener: OnCancelListener): void;
     readonly signal: GenericAbortSignal;
     static resolve (): AxiosPromise<void>;
     static resolve <R> (value: R | Thenable<R>, options?: AxiosPromiseResolveOptions): AxiosPromise<R>;
@@ -83,7 +119,24 @@ export class AxiosPromise <R> implements Thenable <R> {
     static isCanceledError(thing: any): boolean;
     static readonly CanceledError: typeof CanceledError;
     static readonly TimeoutError: typeof TimeoutError;
-    static promisify(thing: GeneratorFunction, options?: PromisifyOptions): boolean;
+    static _unhandledRejection(reason: any, promise: AxiosPromise): void;
+    static promisify<TResult = any>(fn: (...args: any) => IterableIterator<TResult | Thenable<TResult>>, options?: PromisifyOptions): () => AxiosPromise<TResult>;
+    static promisify<TResult = any>(fn: (scope: AxiosPromise<TResult>, ...args: any) => IterableIterator<TResult | Thenable<TResult>>, options?: PromisifyOptions): () => AxiosPromise<TResult>;
+    static promisifyAll(obj: object, options?: PromisifyAllOptions): void;
 }
 
-export class AxiosPromiseSync <R> extends AxiosPromise <R> {}
+export class AxiosPromiseSync <R = any> extends AxiosPromise <R> {}
+
+export function isGenerator(thing:any): boolean;
+export function isGeneratorFunction(thing:any): boolean;
+export function isAsyncFunction(thing:any): boolean;
+export function isPlainFunction(thing:any): boolean;
+export function isAbortSignal(thing:any): boolean;
+export function isAbortController(thing:any): boolean;
+export function isContextDefined(context:any): boolean;
+export function lazyBind(obj: object, props: Record<symbol|string, any>, options?: {bindMethods?: boolean}): boolean;
+export function defineConstants(obj: object, props: Record<symbol|string, any>, options?: {configurable?: boolean, enumerable?: boolean}): void;
+export function setImmediate(handler: ()=> void): void;
+export function asap(handler: ()=> void): void;
+export function symbols(...names: string[]): IterableIterator<symbol>;
+export const global: object;

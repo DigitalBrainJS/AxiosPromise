@@ -5,8 +5,8 @@ Lightweight Promises/A+ compatible implementation with cancellation, sync mode, 
 <div align="center">
 
 [![npm version](https://img.shields.io/npm/v/axios-promise.svg?style=flat-square)](https://www.npmjs.org/package/axios-promise)
-[![CDNJS](https://img.shields.io/cdnjs/v/axios-promise.svg?style=flat-square)](https://cdnjs.com/libraries/axios-promise)
-[![Build status](https://img.shields.io/github/actions/workflow/status/digitalbrainjs/axios-promise/ci.yml?branch=master&label=CI&logo=github&style=flat-square)](https://github.com/digitalbrainjs/axios-promise/actions/workflows/ci.yml)
+[![Build status](https://img.shields.io/github/actions/workflow/status/digitalbrainjs/axiospromise/ci.yml?branch=master&label=CI&logo=github&style=flat-square)](https://github.com/digitalbrainjs/axios-promise/actions/workflows/ci.yml)
+[![Coverage Status](https://coveralls.io/repos/github/DigitalBrainJS/AxiosPromise/badge.svg?branch=master)](https://coveralls.io/github/DigitalBrainJS/AxiosPromise?branch=master)
 [![npm bundle size](https://img.shields.io/bundlephobia/minzip/axios-promise?style=flat-square)](https://bundlephobia.com/package/axios-promise@latest)
 [![npm downloads](https://img.shields.io/npm/dm/axios-promise.svg?style=flat-square)](https://npm-stat.com/charts.html?package=axios-promise)
 
@@ -24,9 +24,59 @@ $ npm install axios-promise
 import {AxiosPromise, AxiosPromiseSync} from 'axios-promise';
 ```
 
+## Intro
+
+`AxiosPromise` is a `Promises/A+` compatible implementation with cancellation API extension, 
+therefore, to start using it, you do not need to additionally learn a new and complex API.
+All you need to know that every promise:
+- has `.cancel([reason])` method
+- has `.onCancel` subscriber for optional aborting long-running asynchronous operation inside a promise 
+
 ## Basic Examples
 
-See [Live Playground](https://codesandbox.io/s/tender-pond-wy5ujx?file=/src/index.js)
+[Live demo](https://playcode.io/1424670)
+
+```js
+import { AxiosPromise } from 'axios-promise';
+
+const p = new AxiosPromise((resolve, reject, {onCancel}) => {
+  const timer = setTimeout(resolve, 1000, 123);
+  onCancel((reason) => {
+    console.log('clear timer', reason);
+    clearTimeout(timer);
+  });
+}).then(
+  v => console.log(`Done: ${v}`), 
+  e => console.warn(`Fail: ${e}`)
+);
+
+setTimeout(()=> p.cancel(), 500);
+```
+
+Instead of using the plain `onCancel` listener you can subscribe to a `AbortSignal` instance for the same purpose.
+
+You can also set onCancel handler by returning it from the promise executor function:
+
+[Live demo](https://playcode.io/1449598)
+
+```js
+import { AxiosPromise } from 'axios-promise';
+
+const p = new AxiosPromise((resolve) => {
+  const timer = setTimeout(resolve, 1000, 123);
+  return (reason) => {
+    console.log('clear timer', reason);
+    clearTimeout(timer);
+  };
+}).then(
+  v => console.log(`Done: ${v}`), 
+  e => console.warn(`Fail: ${e}`)
+);
+
+setTimeout(()=> p.cancel(), 500);
+```
+
+See [Live Playground](https://playcode.io/1411507) ([Version for Node](https://codesandbox.io/p/sandbox/quiet-sunset-km5o2b))
 
 ```js
 function cancelableFetch(url) {
@@ -99,7 +149,7 @@ const p = requestJSON('http://httpbin.org/get');
 
     ```js
     const controller = new AbortController();
-    AxiosPromise.delay(1000).listen(controller).then(console.log, console.warn);
+    AxiosPromise.delay(1000).listen(controller.signal).then(console.log, console.warn);
     setTimeout(() => controller.abort(), 100);
     ```
 

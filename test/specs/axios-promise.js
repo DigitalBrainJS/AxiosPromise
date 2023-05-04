@@ -152,6 +152,37 @@ const assertPromiseStatus = (promise, name = 'promise') => {
         return p;
       });
 
+      it("should support returning onCancel handler from the executor function", async () => {
+        const cancelAfter = 200;
+        const timer = createTimer();
+
+        let invoked = false;
+
+        const p = new PromiseConstructor(() => {
+          return (reason) => {
+            invoked = true;
+
+            if (!AxiosPromise.isCanceledError(reason)) {
+              assert.fail("rejected for reasons other than cancellation");
+            }
+
+            if (timer() < cancelAfter - 10) {
+              assert.fail("early cancellation");
+            }
+          };
+        }).then(() => {
+          assert.fail("not canceled");
+        }, () => {
+          if (!invoked) {
+            assert.fail('onCancel not called');
+          }
+        });
+
+        setTimeout(() => p.cancel(), cancelAfter);
+
+        return p;
+      });
+
       it("should support external AbortSignal", async () => {
         const cancelAfter = 100;
         const timer = createTimer();
@@ -390,5 +421,94 @@ const assertPromiseStatus = (promise, name = 'promise') => {
 
     });
   });
+
+  describe('UnhandledRejection', () => {
+    let originalHandler = AxiosPromise._unhandledRejection;
+    let waringShowed = false;
+
+    before(() => {
+      AxiosPromise._unhandledRejection = () => {
+        waringShowed = true;
+      }
+    });
+
+    after(()=> {
+      AxiosPromise._unhandledRejection = originalHandler;
+    });
+
+    afterEach(() => {
+      waringShowed = false
+    });
+
+    it('should show unhandledRejection waring on uncaught chains', async() =>{
+        new AxiosPromise((resolve, reject) =>{
+          setTimeout(reject, 0, new Error('test'))
+        });
+
+        await AxiosPromise.delay(100);
+
+        assert.ok(waringShowed);
+    });
+
+    it('should not show unhandledRejection waring with Promise.resolve', async() =>{
+      const p = new AxiosPromise((resolve, reject) =>{
+        setTimeout(reject, 50, new Error('test'))
+      });
+
+      await assert.rejects(p);
+
+      await AxiosPromise.delay(100);
+
+      assert.strictEqual(waringShowed, false);
+    });
+
+    it('should not show unhandledRejection waring with native await consuming', async() =>{
+      const p = new AxiosPromise((resolve, reject) =>{
+        setTimeout(reject, 50, new Error('test'))
+      });
+
+      await (async()=> {
+        try {
+          await p;
+        } catch (err) {
+          assert.strictEqual(err.message, 'test');
+        }
+      })();
+
+      await AxiosPromise.delay(100);
+
+      assert.strictEqual(waringShowed, false);
+    });
+  });
+
+  describe('promisifyAll', () => {
+    it('should decorate all Generator functions to async function that uses custom Promise constructor', async () => {
+      const obj = {
+        *foo(v) {
+          return v;
+        }
+      };
+
+      PromiseConstructor.promisifyAll(obj);
+
+      const ret = obj.foo(123);
+      assert.ok(ret instanceof PromiseConstructor);
+      assert.strictEqual(await ret, 123);
+    });
+
+    it('should support reducer option', async () => {
+      const obj = {
+        *foo(v) {
+          return v;
+        }
+      };
+
+      PromiseConstructor.promisifyAll(obj, {reducer: (k) => k +'Async'});
+
+      const ret = obj.fooAsync(123);
+      assert.ok(ret instanceof PromiseConstructor);
+      assert.strictEqual(await ret, 123);
+    });
+  })
 });
 

@@ -1,9 +1,351 @@
-import utils from './utils.js';
-import {CanceledError} from "./CanceledError.js";
-import {TimeoutError} from "./TimeoutError.js";
-import {AbortController, AbortSignal} from "./AbortController.js"
-import EventEmitter from "./EventEmitter.js";
-import {VERSION} from "./env/data.js";
+// AxiosPromise v0.7.0 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+const {
+  hasOwn = (({hasOwnProperty}) => (obj, prop) => hasOwnProperty.call(obj, prop))(Object.prototype)
+} = Object;
+
+const isFunction$1 = (thing) => typeof thing === 'function';
+
+const _global = typeof globalThis === 'object' && globalThis ||
+  (typeof global !== "undefined" && global) ||
+  (typeof self !== "undefined" && self) || window;
+
+const _setImmediate = ((setImmediateSupported, postMessageSupported) => {
+  if (setImmediateSupported) {
+    return setImmediate;
+  }
+
+  return postMessageSupported ? ((token, callbacks) => {
+    _global.addEventListener("message", ({source, data}) => {
+      if (source === _global && data === token) {
+        callbacks.length && callbacks.shift()();
+      }
+    }, false);
+
+    return (cb) => {
+      callbacks.push(cb);
+      _global.postMessage(token, "*");
+    }
+  })(`axios-promise@${Math.random()}`, []) : (cb) => setTimeout(cb);
+})(
+  typeof setImmediate === 'function',
+  isFunction$1(_global.postMessage)
+);
+
+const asap$1 = typeof queueMicrotask !== 'undefined' ?
+  queueMicrotask : ( typeof process !== 'undefined' && process.nextTick || _setImmediate);
+
+const functionTypeTest = ({constructor}) => {
+  const {name} = constructor;
+  return (thing) => thing && isFunction$1(thing) && (thing.constructor === constructor || (name && thing.constructor.name === name));
+};
+
+const isGeneratorFunction$1 = functionTypeTest(function* () {});
+
+const isAsyncFunction$1 = functionTypeTest(async () => {});
+
+const isPlainFunction$1 = functionTypeTest(() => {});
+
+const isGenerator$1 = (obj) => obj && isFunction$1(obj.next) && isFunction$1(obj.throw);
+
+const isContextDefined$1 = (context) => context != null && context !== _global;
+
+const lazyBind$1 = (obj, props, {bindMethods = true} = {}) => {
+  const symbols = {};
+
+  props.forEach(prop => {
+    const symbol = Symbol(`${prop}Lazy`);
+    const descriptor = Object.getOwnPropertyDescriptor(obj, prop);
+    const {value, get, enumerable} = descriptor;
+
+    if('value' in descriptor && !isFunction$1(value)) {
+      console.warn('skip', prop);
+      return;
+    }
+
+    Object.defineProperty(obj, prop, {
+      get() {
+        if (hasOwn.call(this, symbol)) {
+          return this[symbol];
+        }
+
+        const resolvedValue = get ? get.call(this) : value;
+
+        const boundContext = this;
+
+        return this[symbol] = bindMethods && isFunction$1(resolvedValue) ? function () {
+          return resolvedValue.apply(isContextDefined$1(this) ? this : boundContext, arguments);
+        } : resolvedValue;
+      },
+
+      set(v) {
+        throw Error(`Can not rewrite prop ${prop} with ${v}`);
+      },
+
+      enumerable,
+      configurable: true
+    });
+
+    symbols[prop] = symbol;
+  });
+
+  return symbols;
+};
+
+const defineConstants$1 = (obj, props, {configurable = true, enumerable = true} = {}) => {
+  const descriptors = {};
+
+  Object.getOwnPropertyNames(props).forEach((prop) => {
+    descriptors[prop] = {value: props[prop], enumerable, configurable};
+  });
+
+  Object.defineProperties(obj, descriptors);
+};
+
+const isAbortSignal$1 = (thing) => {
+  return thing &&
+    typeof thing === 'object' &&
+    typeof thing.aborted === 'boolean' &&
+    isFunction$1(thing.addEventListener) &&
+    isFunction$1(thing.removeEventListener);
+};
+
+const isAbortController$1 = (thing) => {
+  return thing && typeof thing === 'object' && isFunction$1(thing.abort) && isAbortSignal$1(thing.signal);
+};
+
+const symbols$1 = (...tags) => ({
+  * [Symbol.iterator]() {
+    while (true) {
+      yield Symbol(tags.shift() || '');
+    }
+  }
+});
+
+var utils = {
+  global: _global,
+  setImmediate: _setImmediate,
+  asap: asap$1,
+  isGeneratorFunction: isGeneratorFunction$1,
+  isFunction: isFunction$1,
+  isAsyncFunction: isAsyncFunction$1,
+  isPlainFunction: isPlainFunction$1,
+  functionTypeTest,
+  isContextDefined: isContextDefined$1,
+  hasOwn,
+  lazyBind: lazyBind$1,
+  isGenerator: isGenerator$1,
+  defineConstants: defineConstants$1,
+  isAbortSignal: isAbortSignal$1,
+  isAbortController: isAbortController$1,
+  symbols: symbols$1
+};
+
+const kInternals$1 = Symbol('internals');
+const kSignature = Symbol.for(`AxiosPromise.CanceledError`);
+
+class CanceledError extends Error {
+  constructor(message, code) {
+    super(message || 'canceled');
+    const internal = this.constructor[kInternals$1];
+    this.name = internal.name;
+    this.code = code || internal.code;
+  }
+
+  static from(thing) {
+    return this.isCanceledError(thing) ? thing : new this(thing instanceof Error ? thing.message : thing);
+  }
+
+  static isCanceledError(err) {
+    return !!(err && err[kSignature]);
+  }
+
+  static addSignatureTo(constructor) {
+    typeof constructor === 'function' && (constructor.prototype[kSignature] = this[kInternals$1].code);
+  }
+
+  static rethrow(err, code) {
+    if (this.isCanceledError(err) && (!code || code === err.code)) {
+      throw err;
+    }
+  }
+
+  static init(name, code) {
+    this[kInternals$1] = {
+      name,
+      code: code || 'ERR_' + name.toUpperCase().replace(/ERROR$/, '')
+    };
+
+    this.addSignatureTo(this);
+  }
+}
+
+CanceledError.init('CanceledError');
+
+class TimeoutError extends CanceledError {
+  constructor(messageOrTimeout, code) {
+    super(typeof messageOrTimeout === 'number' ? `${messageOrTimeout} ms timeout exceeded` : messageOrTimeout, code);
+  }
+}
+
+TimeoutError.init('TimeoutError');
+
+class EventEmitter {
+  constructor(events) {
+    this._events = events || {};
+  }
+
+  on(event, listener, prepend) {
+    const events = this._events;
+    const listeners = events[event];
+
+    events['newListener'] && this.emit('newListener', event, listener);
+
+    if (!listeners) {
+      events[event] = listener;
+    } else if (typeof listeners === 'function') {
+      events[event] = prepend ? [listener, listeners] : [listeners, listener];
+    } else {
+      prepend ? listener.unshift(listener) : listeners.push(listener);
+    }
+
+    return this;
+  }
+
+  off(event, listener) {
+    const events = this._events;
+    const listeners = events[event];
+    let found = false;
+
+    if (listeners) {
+      if (typeof listeners === 'function') {
+        if (listeners === listener) {
+          events[event] = null;
+          found = true;
+        }
+      } else {
+        let i = listeners.length;
+        while (i--) {
+          if (listeners[i] === listener) {
+            listeners.splice(i, 1);
+            found = true;
+            break;
+          }
+        }
+      }
+    }
+
+    found && events['removeListener'] && this.emit('removeListener', event, listener);
+
+    return found;
+  }
+
+  emit(event) {
+    const listeners = this._events[event];
+    if (!listeners) return false;
+
+    const args = Array.from(arguments).slice(1);
+
+    if (typeof listeners === 'function') {
+      listeners.apply(null, args);
+    } else {
+      const l = listeners.length;
+      for (let i = 0; i < l; i++) {
+        listeners.apply(null, args);
+      }
+    }
+    return true;
+  }
+
+  once(event, listener, prepend) {
+    const once = () => {
+      this.off(event, once);
+      listener.apply(null, arguments);
+    };
+
+    return this.on(event, once, prepend);
+  }
+
+  listenerCount(event) {
+    const listeners = this._events[event];
+    return listeners ? (typeof listeners === 'function' ? 1 : listeners.length) : 0;
+  }
+}
+
+const {prototype: prototype$1} = EventEmitter;
+
+prototype$1.addEventListener = prototype$1.on;
+prototype$1.removeEventListener = prototype$1.off;
+
+const [kSignal, kAborted, kAbort] = utils.symbols('signal', 'aborted', 'abort');
+
+const hasNativeSupport = typeof AbortController === 'function' && typeof AbortSignal === 'function';
+
+const _AbortSignal = hasNativeSupport ? AbortSignal : class AbortSignal extends EventEmitter{
+  constructor() {
+    super();
+    this[kAborted] = false;
+  }
+
+  get aborted() {
+    return this[kAborted];
+  }
+
+  [kAbort]() {
+    if (!this[kAborted]) {
+      this[kAborted] = true;
+      this.dispatchEvent('abort');
+    }
+  }
+
+  dispatchEvent(type) {
+    const event = {
+      type,
+      target: this
+    };
+
+    let listener;
+
+    typeof (listener = this['on' + type]) === 'function' && listener.call(this, event);
+
+    this.emit(type, event);
+  }
+
+  get [Symbol.toStringTag]() {
+    return 'AbortSignal'
+  }
+
+  toString() {
+    return '[object AbortSignal]'
+  }
+};
+
+const _AbortController = hasNativeSupport ? AbortController : class AbortControllerPolyfill {
+  constructor() {
+    this[kSignal] = null;
+  }
+
+  get signal() {
+    return this[kSignal] || (this[kSignal] = new _AbortSignal());
+  }
+
+  abort(reason) {
+    this.signal[kAbort](reason);
+  }
+
+  get [Symbol.toStringTag]() {
+    return 'AbortController'
+  }
+
+  toString() {
+    return '[object AbortController]'
+  }
+};
+
+const VERSION = "0.7.0";
 
 const {
   isGenerator,
@@ -16,8 +358,8 @@ const {
   defineConstants,
   symbols,
   isAbortSignal,
-  global,
-  setImmediate,
+  global: global$1,
+  setImmediate: setImmediate$1,
   isAbortController,
   asap
 } = utils;
@@ -92,7 +434,7 @@ const getMethod = (obj, name) => {
   if(((type = typeof obj) === 'object' || type === 'function') && typeof (then = obj[name]) === 'function') {
     return then;
   }
-}
+};
 
 const invokeCallbacks = (callbacks, args, that) => {
   if(!callbacks) return false;
@@ -107,7 +449,7 @@ const invokeCallbacks = (callbacks, args, that) => {
     }
     return !!length;
   }
-}
+};
 
 const [trackUnhandled, untrackUnhandled] = ((trackQueue, length) => {
   let timer;
@@ -120,7 +462,7 @@ const [trackUnhandled, untrackUnhandled] = ((trackQueue, length) => {
       (p = trackQueue[i]).constructor._unhandledRejection(p[kValue], p);
     }
     trackQueue = [];
-  }
+  };
 
   return [(promise) => {
     trackQueue.push(promise);
@@ -140,13 +482,13 @@ const [trackUnhandled, untrackUnhandled] = ((trackQueue, length) => {
   }];
 })([], 0);
 
-export class AxiosPromise{
+class AxiosPromise{
   constructor(executor, {signal, timeout} = {}) {
     this[kState] = STATE_PENDING;
     this[kCallbacks] = null;
     this[kInternals] = {
       signals: null
-    }
+    };
 
     if(signal) {
       if(signal.aborted) {
@@ -206,7 +548,7 @@ export class AxiosPromise{
       if (ms > 0) {
         this[kTimer] = setTimeout(() => {
           this[kTimer] = 0;
-          this.cancel(TimeoutError.from(errorOrMessage || ms))
+          this.cancel(TimeoutError.from(errorOrMessage || ms));
         }, ms);
       }
     }
@@ -241,7 +583,7 @@ export class AxiosPromise{
     let atomic = target[kAtomic];
 
     while (atomic === undefined && (parent = target[kParent]) && !parent[kFinalized] && (forced || typeof parent[kCallbacks] === 'function' || parent[kCallbacks].length <= 1)) {
-      atomic = parent[kAtomic]
+      atomic = parent[kAtomic];
       target = parent;
     }
 
@@ -287,7 +629,7 @@ export class AxiosPromise{
   }
 
   get signal(){
-    return (this[kInternals].controller = new AbortController()).signal;
+    return (this[kInternals].controller = new _AbortController()).signal;
   }
 
   [kUnsubscribe](chain) {
@@ -418,7 +760,7 @@ export class AxiosPromise{
       this[kInnerThenable] = value;
       this[kDoResolve](then, value);
     } else {
-      this[kResolveTo](value, isRejected)
+      this[kResolveTo](value, isRejected);
     }
 
   }
@@ -452,7 +794,7 @@ export class AxiosPromise{
         return this[kSync] ?
           resolver(this[kValue], this[kState] === STATE_REJECTED) :
           asap(() => {
-            resolver(this[kValue], this[kState] === STATE_REJECTED)
+            resolver(this[kValue], this[kState] === STATE_REJECTED);
           });
       }
 
@@ -537,12 +879,12 @@ export class AxiosPromise{
         if (subscribed) {
           canceled = true;
           for (let i = 0; i < length; i++) {
-            chains[i].cancel(reason)
+            chains[i].cancel(reason);
           }
         } else {
           cancelRequested = true;
         }
-      }
+      };
 
       const _reject = (reason) => {
         reject(reason);
@@ -581,12 +923,12 @@ export class AxiosPromise{
         if (subscribed) {
           canceled = true;
           for (let i = 0; i < length; i++) {
-            chains[i].cancel(reason)
+            chains[i].cancel(reason);
           }
         } else {
           cancelRequested = true;
         }
-      }
+      };
 
       const _reject = (reason) => {
         try {
@@ -629,9 +971,9 @@ export class AxiosPromise{
       try {
         next(generator.next(result));
       } catch (e) {
-        promise[kResolveTo](e, true)
+        promise[kResolveTo](e, true);
       }
-    }
+    };
 
     const onRejected = (err) => {
       try {
@@ -639,7 +981,7 @@ export class AxiosPromise{
       } catch (e) {
         promise[kResolveTo](e, true);
       }
-    }
+    };
 
     const next = (r) => {
       if (r.done) {
@@ -651,7 +993,7 @@ export class AxiosPromise{
       promise[kInnerThenable] = innerPromise;
 
       return innerPromise;
-    }
+    };
 
     onFulfilled();
 
@@ -688,7 +1030,7 @@ export class AxiosPromise{
           generatorArgs = arguments;
         }
 
-        context[kResolveGenerator](fn.apply(scopeContext || !this || this === global ? scope : this, generatorArgs), scope)
+        context[kResolveGenerator](fn.apply(scopeContext || !this || this === global$1 ? scope : this, generatorArgs), scope);
       });
     };
 
@@ -719,13 +1061,13 @@ lazyBind(AxiosPromise,['delay', 'promisify']);
 
 defineConstants(AxiosPromise, {
   VERSION,
-  AbortController,
-  AbortSignal,
+  AbortController: _AbortController,
+  AbortSignal: _AbortSignal,
   CanceledError,
   TimeoutError,
 });
 
-export class AxiosPromiseSync extends AxiosPromise {
+class AxiosPromiseSync extends AxiosPromise {
   get [Symbol.toStringTag](){
     return 'AxiosPromiseSync';
   }
@@ -733,24 +1075,25 @@ export class AxiosPromiseSync extends AxiosPromise {
 
 AxiosPromiseSync.prototype[kSync] = true;
 
-export {
-  isGenerator,
-  isGeneratorFunction,
-  isAsyncFunction,
-  isPlainFunction,
-  isContextDefined,
-  lazyBind,
-  defineConstants,
-  symbols,
-  isAbortSignal,
-  global,
-  isAbortController,
-  setImmediate,
-  asap,
-  AbortSignal,
-  AbortController,
-  EventEmitter,
-  CanceledError,
-  TimeoutError,
-  AxiosPromise as default
-};
+exports.AbortController = _AbortController;
+exports.AbortSignal = _AbortSignal;
+exports.AxiosPromise = AxiosPromise;
+exports.AxiosPromiseSync = AxiosPromiseSync;
+exports.CanceledError = CanceledError;
+exports.EventEmitter = EventEmitter;
+exports.TimeoutError = TimeoutError;
+exports.asap = asap;
+exports["default"] = AxiosPromise;
+exports.defineConstants = defineConstants;
+exports.global = global$1;
+exports.isAbortController = isAbortController;
+exports.isAbortSignal = isAbortSignal;
+exports.isAsyncFunction = isAsyncFunction;
+exports.isContextDefined = isContextDefined;
+exports.isGenerator = isGenerator;
+exports.isGeneratorFunction = isGeneratorFunction;
+exports.isPlainFunction = isPlainFunction;
+exports.lazyBind = lazyBind;
+exports.setImmediate = setImmediate$1;
+exports.symbols = symbols;
+//# sourceMappingURL=axios-promise.js.map
