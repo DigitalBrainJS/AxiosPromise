@@ -61,7 +61,7 @@ export class AbortSignal {
 
 export class AbortController {
     readonly signal: AbortSignal;
-    abort(reason: any): void;
+    abort(): void;
 }
 
 export type ErrorCode = string | number | symbol;

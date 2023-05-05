@@ -63,7 +63,7 @@ declare namespace AxiosPromise {
 
     class AbortController {
         readonly signal: AbortSignal;
-        abort(reason: any): void;
+        abort(): void;
     }
 
     export type ErrorCode = string | number | symbol;
