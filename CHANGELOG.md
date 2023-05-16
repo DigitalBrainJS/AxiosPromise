@@ -1,5 +1,22 @@
 # Changelog
 
+# [0.8.0](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.7.0...v0.8.0) (2023-05-16)
+
+
+### Bug Fixes
+
+* **abort-controller:** removed erroneous argument from `abort` method; ([a8d49cf](https://github.com/DigitalBrainJS/AxiosPromise/commit/a8d49cf8f11cf4f577b4470ec938f9be115c6a9e))
+* **package:** fix package entrypoints; ([a6fdfaa](https://github.com/DigitalBrainJS/AxiosPromise/commit/a6fdfaa1c45edd42a49e04292134867ed0ae051c))
+
+
+### Features
+
+* **promisify:** add ability for promisify method to decorate async and plain functions; ([83c8338](https://github.com/DigitalBrainJS/AxiosPromise/commit/83c8338440c96cfb304c9af7d55a5ac68b5efd68))
+
+### Contributors to this release
+
+- DigitalBrainJS
+
 # [0.7.0](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.6.0...v0.7.0) (2023-05-03)
 
 
