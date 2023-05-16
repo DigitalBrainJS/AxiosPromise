@@ -1,4 +1,4 @@
-// AxiosPromise v0.7.0 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
+// AxiosPromise v0.8.0 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
 const {
   hasOwn = (({hasOwnProperty}) => (obj, prop) => hasOwnProperty.call(obj, prop))(Object.prototype)
 } = Object;
@@ -328,8 +328,8 @@ const _AbortController = hasNativeSupport ? AbortController : class AbortControl
     return this[kSignal] || (this[kSignal] = new _AbortSignal());
   }
 
-  abort(reason) {
-    this.signal[kAbort](reason);
+  abort() {
+    this.signal[kAbort]();
   }
 
   get [Symbol.toStringTag]() {
@@ -341,7 +341,7 @@ const _AbortController = hasNativeSupport ? AbortController : class AbortControl
   }
 };
 
-const VERSION = "0.7.0";
+const VERSION = "0.8.0";
 
 const {
   isGenerator,
@@ -1001,34 +1001,35 @@ class AxiosPromise{
     console.warn(`Unhandled AxiosPromise Rejection${source}: ` + reason);
   }
 
-  static promisify(fn, {scopeArg = false, scopeContext = false, passthrough = true} = {}) {
+  static promisify(fn, {scopeArg = false, scopeContext = false} = {}) {
     if (fn && fn[kPromiseSign]) return fn;
 
-    if (!isGeneratorFunction(fn)) {
-      if (passthrough) {
-        if (!isFunction(fn)) {
-          throw TypeError('value must be a function');
-        }
-        return fn;
-      }
-      throw new TypeError(`value must be a generator function`);
+    if (!isFunction(fn)) {
+      throw TypeError('value must be a function');
     }
 
+    let asyncFn;
     const context = this;
 
-    const asyncFn = function () {
-      return new context((resolve, reject, scope) => {
-        let generatorArgs;
-        if (scopeArg) {
-          generatorArgs = [scope];
-          push.apply(generatorArgs, arguments);
-        } else {
-          generatorArgs = arguments;
-        }
+    if (isGeneratorFunction(fn)) {
+      asyncFn = function () {
+        return new context((resolve, reject, scope) => {
+          let generatorArgs;
+          if (scopeArg) {
+            generatorArgs = [scope];
+            push.apply(generatorArgs, arguments);
+          } else {
+            generatorArgs = arguments;
+          }
 
-        context[kResolveGenerator](fn.apply(scopeContext || !this || this === global$1 ? scope : this, generatorArgs), scope);
-      });
-    };
+          context[kResolveGenerator](fn.apply(scopeContext || !this || this === global$1 ? scope : this, generatorArgs), scope);
+        });
+      };
+    } else {
+      asyncFn = function() {
+        return context.resolve(fn.apply(this, arguments));
+      };
+    }
 
     asyncFn[kPromiseSign] = true;
 
