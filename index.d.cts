@@ -31,7 +31,6 @@ interface AxiosPromiseResolveOptions {
 interface PromisifyOptions {
     scopeArg?: boolean;
     scopeContext?: boolean;
-    passthrough?: boolean;
 }
 
 interface PromisifyAllOptions extends PromisifyOptions {
@@ -46,12 +45,12 @@ declare namespace AxiosPromise {
     class EventEmitter {
         constructor(events?: RawEvents);
         constructor(events?: RawEvents);
-        on(event: EventName, listener: Function, prepend: boolean): this;
-        addEventListener(event: EventName, listener: Function, prepend: boolean): this;
+        on(event: EventName, listener: Function, prepend?: boolean): this;
+        addEventListener(event: EventName, listener: Function, prepend?: boolean): this;
         off(event: EventName, listener: Function): boolean;
         removeEventListener(event: EventName, listener: Function): boolean;
         emit(event: EventName, ...args: any): boolean;
-        once(event: EventName, listener: Function, prepend: boolean): this;
+        once(event: EventName, listener: Function, prepend?: boolean): this;
         listenerCount(event: EventName): number;
     }
 

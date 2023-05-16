@@ -407,18 +407,6 @@ const assertPromiseStatus = (promise, name = 'promise') => {
           assert.strictEqual(result, 125);
         });
       });
-
-      describe('promisify', () => {
-        it("should decorate the generator as async function", async () => {
-          const result = await PromiseConstructor.promisify(function* (v) {
-            const x = yield delay(100, v + 1);
-            return yield delay(100, x + 1);
-          })(123);
-
-          assert.strictEqual(result, 125);
-        });
-      });
-
     });
   });
 
@@ -478,6 +466,23 @@ const assertPromiseStatus = (promise, name = 'promise') => {
       await AxiosPromise.delay(100);
 
       assert.strictEqual(waringShowed, false);
+    });
+  });
+
+  describe('promisify', () => {
+    it('should promisify async and plain functions', async () => {
+      const fn = PromiseConstructor.promisify((v) =>  v + 'bar');
+
+      await assert.strictEqual(await fn('foo'), 'foobar');
+    });
+
+    it("should decorate generators as async functions", async () => {
+      const result = await PromiseConstructor.promisify(function* (v) {
+        const x = yield PromiseConstructor.delay(100, v + 1);
+        return yield PromiseConstructor.delay(100, x + 1);
+      })(123);
+
+      assert.strictEqual(result, 125);
     });
   });
 

@@ -7,11 +7,13 @@ export interface Thenable <R> {
 
 type SettledStatus = 'fulfilled' | 'rejected';
 
+type AnyFunction = (...args: any) => any;
+
 export interface GenericAbortSignal {
     readonly aborted: boolean;
-    onabort?: ((...args: any) => any) | null;
-    addEventListener?: (...args: any) => any;
-    removeEventListener?: (...args: any) => any;
+    onabort?: AnyFunction;
+    addEventListener?: AnyFunction;
+    removeEventListener?: AnyFunction;
 }
 
 interface AxiosPromiseOptions {
@@ -31,7 +33,6 @@ interface AxiosPromiseResolveOptions {
 interface PromisifyOptions {
     scopeArg?: boolean;
     scopeContext?: boolean;
-    passthrough?: boolean;
 }
 
 interface PromisifyAllOptions extends PromisifyOptions {
@@ -44,16 +45,16 @@ type RawEvents = Record<EventName, Function|Function[]|null>
 
 export class EventEmitter {
     constructor(events?: RawEvents);
-    on(event: EventName, listener: Function, prepend: boolean): this;
-    addEventListener(event: EventName, listener: Function, prepend: boolean): this;
+    on(event: EventName, listener: Function, prepend?: boolean): this;
+    addEventListener(event: EventName, listener: Function, prepend?: boolean): this;
     off(event: EventName, listener: Function): boolean;
     removeEventListener(event: EventName, listener: Function): boolean;
     emit(event: EventName, ...args: any): boolean;
-    once(event: EventName, listener: Function, prepend: boolean): this;
+    once(event: EventName, listener: Function, prepend?: boolean): this;
     listenerCount(event: EventName): number;
 }
 
-export class AbortSignal {
+export class AbortSignal implements GenericAbortSignal{
     readonly aborted: boolean;
     addEventListener(event: EventName, listener: Function): void;
     removeEventListener(event: EventName, listener: Function): void;
