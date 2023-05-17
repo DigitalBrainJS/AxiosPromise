@@ -1,4 +1,4 @@
-// AxiosPromise v0.8.0 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
+// AxiosPromise v0.8.1 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
 'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
@@ -345,7 +345,7 @@ const _AbortController = hasNativeSupport ? AbortController : class AbortControl
   }
 };
 
-const VERSION = "0.8.0";
+const VERSION = "0.8.1";
 
 const {
   isGenerator,
@@ -1012,11 +1012,11 @@ class AxiosPromise{
       throw TypeError('value must be a function');
     }
 
-    let asyncFn;
+    let promisified;
     const context = this;
 
     if (isGeneratorFunction(fn)) {
-      asyncFn = function () {
+      promisified = function () {
         return new context((resolve, reject, scope) => {
           let generatorArgs;
           if (scopeArg) {
@@ -1030,14 +1030,18 @@ class AxiosPromise{
         });
       };
     } else {
-      asyncFn = function() {
-        return context.resolve(fn.apply(this, arguments));
+      promisified = function() {
+        try {
+          return context.resolve(fn.apply(this, arguments));
+        } catch (err) {
+          return context.reject(err);
+        }
       };
     }
 
-    asyncFn[kPromiseSign] = true;
+    promisified[kPromiseSign] = true;
 
-    return asyncFn;
+    return promisified;
   }
 
   static promisifyAll(obj, {reducer, ...options} = {}) {
