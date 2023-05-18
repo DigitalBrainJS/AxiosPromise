@@ -1,4 +1,4 @@
-// AxiosPromise v0.8.1 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
+// AxiosPromise v0.8.2 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
 const {
   hasOwn = (({hasOwnProperty}) => (obj, prop) => hasOwnProperty.call(obj, prop))(Object.prototype)
 } = Object;
@@ -341,7 +341,7 @@ const _AbortController = hasNativeSupport ? AbortController : class AbortControl
   }
 };
 
-const VERSION = "0.8.1";
+const VERSION = "0.8.2";
 
 const {
   isGenerator,
@@ -478,7 +478,7 @@ const [trackUnhandled, untrackUnhandled] = ((trackQueue, length) => {
   }];
 })([], 0);
 
-class AxiosPromise{
+class AxiosPromise {
   constructor(executor, {signal, timeout} = {}) {
     this[kState] = STATE_PENDING;
     this[kCallbacks] = null;
@@ -486,8 +486,8 @@ class AxiosPromise{
       signals: null
     };
 
-    if(signal) {
-      if(signal.aborted) {
+    if (signal) {
+      if (signal.aborted) {
         this.cancel();
         return this;
       }
@@ -499,7 +499,7 @@ class AxiosPromise{
 
     let type;
 
-    if(executor !== noop) {
+    if (executor !== noop) {
       if ((type = typeof executor) !== 'function') {
         this[kResolveTo](new TypeError(`Promise resolver ${type} is not a function`));
         return this;
@@ -601,7 +601,7 @@ class AxiosPromise{
   }
 
   listen(signal) {
-    if(!this[kFinalized]) {
+    if (!this[kFinalized]) {
       if (!isAbortSignal(signal)) {
         throw TypeError('expected AbortSignal object');
       }
@@ -624,14 +624,14 @@ class AxiosPromise{
     this[kCancelCallbacks] ? this[kCancelCallbacks].push(listener) : this[kCancelCallbacks] = [listener];
   }
 
-  get signal(){
+  get signal() {
     return (this[kInternals].controller = new _AbortController()).signal;
   }
 
   [kUnsubscribe](chain) {
     const parentCallbacks = this[kCallbacks];
     const callback = chain[kCallback];
-    if(typeof parentCallbacks === 'function' && parentCallbacks === callback) {
+    if (typeof parentCallbacks === 'function' && parentCallbacks === callback) {
       this[kCallbacks] = null;
     } else {
       let i = parentCallbacks.length;
@@ -643,7 +643,7 @@ class AxiosPromise{
     }
   }
 
-  [kFinalize](){
+  [kFinalize]() {
     this[kFinalized] = true;
 
     let value = this[kValue];
@@ -672,7 +672,7 @@ class AxiosPromise{
       }
     }
 
-    if(canceled){
+    if (canceled) {
       const cancelCallbacks = this[kCancelCallbacks];
 
       if (cancelCallbacks) {
@@ -686,7 +686,7 @@ class AxiosPromise{
 
     let hasCallback;
 
-    if(callbacks) {
+    if (callbacks) {
       if (typeof callbacks === 'function') {
         hasCallback = true;
         callbacks(value, isRejected);
@@ -699,7 +699,7 @@ class AxiosPromise{
       }
     }
 
-    if(isRejected && !hasCallback && !canceled) {
+    if (isRejected && !hasCallback && !canceled) {
       if (hasConsole && this[kAtomic] !== ATOMIC_MODE_DETACHED) {
         this[kUnhandledFlag] = true;
         trackUnhandled(this);
@@ -829,7 +829,7 @@ class AxiosPromise{
     ))
   }
 
-  get [Symbol.toStringTag](){
+  get [Symbol.toStringTag]() {
     return 'AxiosPromise';
   }
 
@@ -948,7 +948,7 @@ class AxiosPromise{
   }
 
   static delay(ms, value) {
-    return new this((resolve, _, {onCancel})=> {
+    return new this((resolve, _, {onCancel}) => {
       const timer = setTimeout(resolve, ms, value);
       onCancel(() => clearTimeout(timer));
     });
@@ -1026,7 +1026,7 @@ class AxiosPromise{
         });
       };
     } else {
-      promisified = function() {
+      promisified = function () {
         try {
           return context.resolve(fn.apply(this, arguments));
         } catch (err) {
@@ -1041,14 +1041,17 @@ class AxiosPromise{
   }
 
   static promisifyAll(obj, {reducer, ...options} = {}) {
-    Object.entries(obj).forEach(([key, value]) => {
-      const descriptor = Object.getOwnPropertyDescriptor(obj, key);
-      let ret;
-      'value' in descriptor && (!reducer || (ret = reducer.call(obj, key, value))) && isGeneratorFunction(value) &&
-      Object.defineProperty(obj, ret && typeof key ==='string' ? ret : key, {
-        ...descriptor,
-        value: this.promisify(value, options)
-      });
+    const descriptors = Object.getOwnPropertyDescriptors(obj);
+    let ret, value;
+
+    Object.entries(descriptors).forEach(([key, descriptor]) => {
+      if ('value' in descriptor && isGeneratorFunction(value = descriptor.value) && descriptor.configurable &&
+        (!reducer || (ret = reducer.call(obj, key, value)))) {
+        Object.defineProperty(obj, ret || key, {
+          ...descriptor,
+          value: this.promisify(value, options)
+        });
+      }
     });
   }
 }
