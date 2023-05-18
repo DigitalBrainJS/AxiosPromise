@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.8.1](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.8.0...v0.8.1) (2023-05-17)
+
+
+### Bug Fixes
+
+* **promisify:** fix catching sync errors inside plain function; ([053c8b5](https://github.com/DigitalBrainJS/AxiosPromise/commit/053c8b5cea924bbeaa00918b89218a592c23d77d))
+
+### Contributors to this release
+
+- DigitalBrainJS
+
 # [0.8.0](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.7.0...v0.8.0) (2023-05-16)
 
 
