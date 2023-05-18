@@ -488,13 +488,15 @@ const assertPromiseStatus = (promise, name = 'promise') => {
 
   describe('promisifyAll', () => {
     it('should decorate all Generator functions to async function that uses custom Promise constructor', async () => {
-      const obj = {
+      class Test{
         *foo(v) {
           return v;
         }
-      };
+      }
 
-      PromiseConstructor.promisifyAll(obj);
+      const obj = new Test();
+
+      PromiseConstructor.promisifyAll(Test.prototype);
 
       const ret = obj.foo(123);
       assert.ok(ret instanceof PromiseConstructor);
