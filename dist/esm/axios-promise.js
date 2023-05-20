@@ -1,4 +1,4 @@
-// AxiosPromise v0.8.2 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
+// AxiosPromise v0.9.0 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
 const {
   hasOwn = (({hasOwnProperty}) => (obj, prop) => hasOwnProperty.call(obj, prop))(Object.prototype)
 } = Object;
@@ -341,7 +341,14 @@ const _AbortController = hasNativeSupport ? AbortController : class AbortControl
   }
 };
 
-const VERSION = "0.8.2";
+const VERSION = "0.9.0";
+
+class UnhandledRejectionError extends Error{
+  constructor(err, message) {
+    super((message ? message + ': ' : '') + err.message, {cause: err});
+    err.name = 'UnhandledRejectionError';
+  }
+}
 
 const {
   isGenerator,
@@ -996,9 +1003,9 @@ class AxiosPromise {
     return promise;
   }
 
-  static _unhandledRejection(reason) {
-    const source = this[kTag] ? ` @ ${this[kTag]}` : '';
-    console.warn(`Unhandled AxiosPromise Rejection${source}: ` + reason);
+  static _unhandledRejection(unhandledError) {
+    const tag = this[kTag] ? `@ ${this[kTag]}` : '';
+    console.error(new UnhandledRejectionError(unhandledError, tag));
   }
 
   static promisify(fn, {scopeArg = false, scopeContext = false} = {}) {
