@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.8.2](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.8.1...v0.8.2) (2023-05-18)
+
+
+### Bug Fixes
+
+* **promisifyAll:** support promisification for non enumerable props; ([ea464d6](https://github.com/DigitalBrainJS/AxiosPromise/commit/ea464d6ac3a7d1c69403a24fdf141f431fca43a4))
+
+### Contributors to this release
+
+- DigitalBrainJS
+
+## [0.8.1](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.8.0...v0.8.1) (2023-05-17)
+
+
+### Bug Fixes
+
+* **promisify:** fix catching sync errors inside plain function; ([053c8b5](https://github.com/DigitalBrainJS/AxiosPromise/commit/053c8b5cea924bbeaa00918b89218a592c23d77d))
+
+### Contributors to this release
+
+- DigitalBrainJS
+
 # [0.8.0](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.7.0...v0.8.0) (2023-05-16)
 
 
