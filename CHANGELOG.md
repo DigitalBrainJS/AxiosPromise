@@ -1,5 +1,21 @@
 # Changelog
 
+# [0.9.0](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.8.2...v0.9.0) (2023-05-20)
+
+
+### Bug Fixes
+
+* **promisifyAll:** support promisification for non enumerable props; ([b643bdc](https://github.com/DigitalBrainJS/AxiosPromise/commit/b643bdc1e86d2e947d624d557af9e89d044617f7))
+
+
+### Features
+
+* **UnhandledRejectionError:** added UnhandledRejectionError class to wrap unhandled errors and have stack traces; ([c44282a](https://github.com/DigitalBrainJS/AxiosPromise/commit/c44282af14d577cb8c9e6cec94bd14443a717a41))
+
+### Contributors to this release
+
+- DigitalBrainJS
+
 ## [0.8.2](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.8.1...v0.8.2) (2023-05-18)
 
 
