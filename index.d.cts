@@ -106,6 +106,8 @@ declare namespace AxiosPromise {
 
         onCancel(onCancelListener: OnCancelListener): void;
 
+        tag(str: string): AxiosPromise<R>;
+
         readonly signal: GenericAbortSignal;
 
         static resolve(): AxiosPromise<void>;

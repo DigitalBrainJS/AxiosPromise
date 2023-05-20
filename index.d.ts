@@ -97,6 +97,7 @@ export class AxiosPromise <R = any> implements Thenable <R> {
     listen(signal: GenericAbortSignal): AxiosPromise<R>;
     cancel(reason?: any): boolean;
     onCancel(onCancelListener: OnCancelListener): void;
+    tag(str: string): AxiosPromise<R>;
     readonly signal: GenericAbortSignal;
     static resolve (): AxiosPromise<void>;
     static resolve <R> (value: R | Thenable<R>, options?: AxiosPromiseResolveOptions): AxiosPromise<R>;
