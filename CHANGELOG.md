@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.9.1](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.9.0...v0.9.1) (2023-05-20)
+
+
+### Bug Fixes
+
+* **tag:** fixed promise tag rendering for unhandled rejection error; ([1035012](https://github.com/DigitalBrainJS/AxiosPromise/commit/103501297b278d563f286b07e293068cece53e11))
+
+### Contributors to this release
+
+- DigitalBrainJS
+
 # [0.9.0](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.8.2...v0.9.0) (2023-05-20)
 
 
