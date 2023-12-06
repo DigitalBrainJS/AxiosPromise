@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.9.3](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.9.2...v0.9.3) (2023-12-06)
+
+
+### Bug Fixes
+
+* **EventEmitter:** fixed event emitting when the listener is removed during emit; ([#51](https://github.com/DigitalBrainJS/AxiosPromise/issues/51)) ([f21db77](https://github.com/DigitalBrainJS/AxiosPromise/commit/f21db77834596658226e1ea9350900a34cb3be6d))
+
+### Contributors to this release
+
+- Dmitriy Mozgovoy
+
 ## [0.9.2](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.9.1...v0.9.2) (2023-12-06)
 
 
