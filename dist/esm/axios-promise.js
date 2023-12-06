@@ -1,4 +1,4 @@
-// AxiosPromise v0.9.2 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
+// AxiosPromise v0.9.3 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
 const {
   hasOwn = (({hasOwnProperty}) => (obj, prop) => hasOwnProperty.call(obj, prop))(Object.prototype)
 } = Object;
@@ -240,7 +240,7 @@ class EventEmitter {
   }
 
   emit(event) {
-    const listeners = this._events[event];
+    let listeners = this._events[event];
     if (!listeners) return false;
 
     const args = Array.from(arguments).slice(1);
@@ -249,6 +249,7 @@ class EventEmitter {
       listeners.apply(null, args);
     } else {
       const l = listeners.length;
+      l > 1 && (listeners = listeners.slice());
       for (let i = 0; i < l; i++) {
         listeners[i].apply(null, args);
       }
@@ -341,7 +342,7 @@ const _AbortController = hasNativeSupport ? AbortController : class AbortControl
   }
 };
 
-const VERSION = "0.9.2";
+const VERSION = "0.9.3";
 
 class UnhandledRejectionError extends Error{
   constructor(err, message) {
