@@ -1,4 +1,4 @@
-// AxiosPromise v0.9.1 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
+// AxiosPromise v0.9.2 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
 'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
@@ -254,7 +254,7 @@ class EventEmitter {
     } else {
       const l = listeners.length;
       for (let i = 0; i < l; i++) {
-        listeners.apply(null, args);
+        listeners[i].apply(null, args);
       }
     }
     return true;
@@ -345,7 +345,7 @@ const _AbortController = hasNativeSupport ? AbortController : class AbortControl
   }
 };
 
-const VERSION = "0.9.1";
+const VERSION = "0.9.2";
 
 class UnhandledRejectionError extends Error{
   constructor(err, message) {

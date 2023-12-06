@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.9.2](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.9.1...v0.9.2) (2023-12-06)
+
+
+### Bug Fixes
+
+* **EventEmitter:** fixed event emitting when there are multiple event listeners; ([#49](https://github.com/DigitalBrainJS/AxiosPromise/issues/49)) ([654d70f](https://github.com/DigitalBrainJS/AxiosPromise/commit/654d70ffca6e27337ec0f65abf82914d292c8d2d))
+
+### Contributors to this release
+
+- Dmitriy Mozgovoy
+
 ## [0.9.1](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.9.0...v0.9.1) (2023-05-20)
 
 
