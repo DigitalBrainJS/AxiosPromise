@@ -224,7 +224,7 @@ const signalReasonSupport = 'reason' in new AbortController().signal;
             assert.fail("rejected for reasons other than cancellation");
           }
 
-          assert.strictEqual(reason.message, err.message, '');
+          assert.strictEqual(reason.message, err.message);
 
           if (timer() < cancelAfter - 10) {
             assert.fail("early cancellation");
