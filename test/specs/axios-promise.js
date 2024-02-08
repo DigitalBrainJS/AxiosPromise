@@ -61,6 +61,8 @@ const assertPromiseStatus = (promise, name = 'promise') => {
   }
 }
 
+const signalReasonSupport = 'reason' in new AbortController().signal;
+
 [AxiosPromise, AxiosPromiseSync].forEach((PromiseConstructor) => {
   describe(PromiseConstructor.name, function () {
 
@@ -205,7 +207,11 @@ const assertPromiseStatus = (promise, name = 'promise') => {
         return p;
       });
 
-      it("should respect AbortSignal reason", async () => {
+      it("should respect AbortSignal reason", async function () {
+        if(!signalReasonSupport) {
+          this.skip();
+        }
+
         const cancelAfter = 100;
         const timer = createTimer();
         const controller = new AbortController();
