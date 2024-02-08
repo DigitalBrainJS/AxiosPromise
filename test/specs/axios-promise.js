@@ -205,6 +205,31 @@ const assertPromiseStatus = (promise, name = 'promise') => {
         return p;
       });
 
+      it("should respect AbortSignal reason", async () => {
+        const cancelAfter = 100;
+        const timer = createTimer();
+        const controller = new AbortController();
+        const err = new Error('test reason');
+
+        const p = delay(500).listen(controller.signal).then(() => {
+          assert.fail("not canceled");
+        }, (reason) => {
+          if (!AxiosPromise.isCanceledError(reason)) {
+            assert.fail("rejected for reasons other than cancellation");
+          }
+
+          assert.strictEqual(reason.message, err.message, '');
+
+          if (timer() < cancelAfter - 10) {
+            assert.fail("early cancellation");
+          }
+        });
+
+        setTimeout(() => controller.abort(err), cancelAfter);
+
+        return p;
+      });
+
       it("should support signal providing", async () => {
         const cancelAfter = 100;
         const timer = createTimer();
