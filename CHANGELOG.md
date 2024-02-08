@@ -1,5 +1,21 @@
 # Changelog
 
+# [0.10.0](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.9.3...v0.10.0) (2024-02-08)
+
+
+### Bug Fixes
+
+* **AbortController:** fix signal reason handling; ([#53](https://github.com/DigitalBrainJS/AxiosPromise/issues/53)) ([c64fec4](https://github.com/DigitalBrainJS/AxiosPromise/commit/c64fec48940f9491e77b359b1cd548488061fa31))
+
+
+### Features
+
+* **AbortController:** added support for AbortSignal.reason; ([65190e3](https://github.com/DigitalBrainJS/AxiosPromise/commit/65190e3def34111f2618053f63e4483ca628c3e2))
+
+### Contributors to this release
+
+- DigitalBrainJS
+
 ## [0.9.3](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.9.2...v0.9.3) (2023-12-06)
 
 

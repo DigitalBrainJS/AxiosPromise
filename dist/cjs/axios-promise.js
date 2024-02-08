@@ -1,4 +1,4 @@
-// AxiosPromise v0.9.3 Copyright (c) 2023 Dmitriy Mozgovoy and contributors
+// AxiosPromise v0.10.0 Copyright (c) 2024 Dmitriy Mozgovoy and contributors
 'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
@@ -281,9 +281,10 @@ const {prototype: prototype$1} = EventEmitter;
 prototype$1.addEventListener = prototype$1.on;
 prototype$1.removeEventListener = prototype$1.off;
 
-const [kSignal, kAborted, kAbort] = utils.symbols('signal', 'aborted', 'abort');
+const [kSignal, kAborted, kAbort, kReason] = utils.symbols('signal', 'aborted', 'abort', 'reason');
 
-const hasNativeSupport = typeof AbortController === 'function' && typeof AbortSignal === 'function';
+const hasNativeSupport = typeof AbortController === 'function'
+  && typeof AbortSignal === 'function' && 'reason' in new AbortController().signal;
 
 const _AbortSignal = hasNativeSupport ? AbortSignal : class AbortSignal extends EventEmitter{
   constructor() {
@@ -295,9 +296,14 @@ const _AbortSignal = hasNativeSupport ? AbortSignal : class AbortSignal extends 
     return this[kAborted];
   }
 
-  [kAbort]() {
+  get reason() {
+    return this[kReason];
+  }
+
+  [kAbort](reason) {
     if (!this[kAborted]) {
       this[kAborted] = true;
+      this[kReason] = reason;
       this.dispatchEvent('abort');
     }
   }
@@ -333,8 +339,8 @@ const _AbortController = hasNativeSupport ? AbortController : class AbortControl
     return this[kSignal] || (this[kSignal] = new _AbortSignal());
   }
 
-  abort() {
-    this.signal[kAbort]();
+  abort(reason) {
+    this.signal[kAbort](reason);
   }
 
   get [Symbol.toStringTag]() {
@@ -346,7 +352,7 @@ const _AbortController = hasNativeSupport ? AbortController : class AbortControl
   }
 };
 
-const VERSION = "0.9.3";
+const VERSION = "0.10.0";
 
 class UnhandledRejectionError extends Error{
   constructor(err, message) {
@@ -626,7 +632,7 @@ class AxiosPromise {
         internals.signals = [signal];
       }
 
-      signal.addEventListener('abort', () => this.cancel());
+      signal.addEventListener('abort', () => this.cancel(signal.reason));
     }
 
     return this;
