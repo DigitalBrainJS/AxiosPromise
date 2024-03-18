@@ -94,7 +94,7 @@ export class AxiosPromise <R = any> implements Thenable <R> {
     finally<U = any> (onFinally?: (result: {value: U, status: SettledStatus}, scope: AxiosPromise<U>) => any | Thenable<any>): AxiosPromise<R>;
     atomic<U = any>(mode?: AtomicMode): AxiosPromise<U>;
     timeout(ms: number, errorOrMessage?: Error|string|number): AxiosPromise<R>;
-    listen(signal: GenericAbortSignal): AxiosPromise<R>;
+    listen(signal?: GenericAbortSignal): AxiosPromise<R>;
     cancel(reason?: any): boolean;
     onCancel(onCancelListener: OnCancelListener): void;
     tag(str: string): AxiosPromise<R>;
@@ -141,4 +141,5 @@ export function defineConstants(obj: object, props: Record<symbol|string, any>, 
 export function setImmediate(handler: ()=> void): void;
 export function asap(handler: ()=> void): void;
 export function symbols(...names: string[]): IterableIterator<symbol>;
+export function bottleneck<TResult = any, TArgs extends any[] = []>(fn: (...args: TArgs) => any, options?: {concurrency: number, cancelRunning: boolean, sync: boolean, timeout: number, taskTimeout: number, queueTimeout: number}) : (...args: TArgs) => AxiosPromise<TResult>
 export const global: object;
