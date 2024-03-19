@@ -1,4 +1,4 @@
-// AxiosPromise v0.10.0 Copyright (c) 2024 Dmitriy Mozgovoy and contributors
+// AxiosPromise v0.11.0 Copyright (c) 2024 Dmitriy Mozgovoy and contributors
 'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
@@ -149,7 +149,7 @@ const kSignature = Symbol.for(`AxiosPromise.CanceledError`);
 
 class CanceledError extends Error {
   constructor(message, code) {
-    super(message || 'canceled');
+    super(message || 'This operation was aborted');
     const internal = this.constructor[kInternals$1];
     this.name = internal.name;
     this.code = code || internal.code;
@@ -321,6 +321,12 @@ const _AbortSignal = hasNativeSupport ? AbortSignal : class AbortSignal extends 
     this.emit(type, event);
   }
 
+  throwIfAborted() {
+    if (this[kAborted]) {
+      throw this[kReason];
+    }
+  }
+
   get [Symbol.toStringTag]() {
     return 'AbortSignal'
   }
@@ -352,7 +358,7 @@ const _AbortController = hasNativeSupport ? AbortController : class AbortControl
   }
 };
 
-const VERSION = "0.10.0";
+const VERSION = "0.11.0";
 
 class UnhandledRejectionError extends Error{
   constructor(err, message) {
@@ -375,7 +381,8 @@ const {
   global: global$1,
   setImmediate: setImmediate$1,
   isAbortController,
-  asap
+  asap,
+  drop
 } = utils;
 
 const kPromiseSign = Symbol.for('AxiosPromise');
@@ -441,11 +448,11 @@ const hasConsole = typeof console !== 'undefined' && console;
 
 const noop = () => {};
 
-const getMethod = (obj, name) => {
+const getThen = (obj) => {
   let type;
   let then;
 
-  if(((type = typeof obj) === 'object' || type === 'function') && typeof (then = obj[name]) === 'function') {
+  if(((type = typeof obj) === 'object' || type === 'function') && typeof (then = obj.then) === 'function') {
     return then;
   }
 };
@@ -619,7 +626,7 @@ class AxiosPromise {
   }
 
   listen(signal) {
-    if (!this[kFinalized]) {
+    if (signal != null && !this[kFinalized]) {
       if (!isAbortSignal(signal)) {
         throw TypeError('expected AbortSignal object');
       }
@@ -744,10 +751,9 @@ class AxiosPromise {
     }
 
     this[kValue] = value;
+    this[kState] = isRejected ? STATE_REJECTED : STATE_FULFILLED;
 
     if (!settled) {
-      this[kState] = isRejected ? STATE_REJECTED : STATE_FULFILLED;
-
       this[kSync] ? this[kFinalize]() : asap(() => this[kFinalize]());
     }
   }
@@ -764,7 +770,7 @@ class AxiosPromise {
       then = (value = constructor[kResolveGenerator](value, new constructor(noop))).then;
     } else if (value) {
       try {
-        then = getMethod(value, 'then');
+        then = getThen(value);
       } catch (err) {
         return this[kResolveTo](err, true);
       }
@@ -1002,11 +1008,7 @@ class AxiosPromise {
         return promise[kResolve](r.value);
       }
 
-      const innerPromise = this.resolve(r.value).then(onFulfilled, onRejected);
-
-      promise[kInnerThenable] = innerPromise;
-
-      return innerPromise;
+      promise[kInnerThenable] = this.resolve(r.value).then(onFulfilled, onRejected);
     };
 
     onFulfilled();
@@ -1098,6 +1100,52 @@ class AxiosPromiseSync extends AxiosPromise {
 
 AxiosPromiseSync.prototype[kSync] = true;
 
+const bottleneck = (fn, {concurrency = 1, cancelRunning, sync, timeout, taskTimeout, queueTimeout} = {}) => {
+  const queue = [];
+  const running = [];
+  let pending = 0;
+
+  const constructor = sync ? AxiosPromiseSync : AxiosPromise;
+
+  fn = constructor.promisify(fn);
+
+  return function(...args) {
+    let done;
+    let pushed;
+
+    const promise = new constructor((resolve) => {
+      if (pending++ < concurrency) {
+        return resolve();
+      }
+
+      if (cancelRunning && running[0]) {
+        running.shift().cancel('task limit reached');
+      }
+
+      return queue.push(resolve);
+    })
+      .timeout(queueTimeout, 'queue timeout')
+      .then(() => {
+        return constructor.resolve(fn.apply(this, args)).timeout(taskTimeout, 'task timeout')
+      }).finally((v) => {
+        done = true;
+        pending--;
+        if (pushed) {
+          const index = running.indexOf(promise);
+          running.splice(index, 1);
+        }
+        queue.length && queue.shift()();
+      });
+
+    if (!done) {
+      pushed = true;
+      running.push(promise);
+    }
+
+    return promise.timeout(timeout);
+  }
+};
+
 exports.AbortController = _AbortController;
 exports.AbortSignal = _AbortSignal;
 exports.AxiosPromise = AxiosPromise;
@@ -1106,6 +1154,7 @@ exports.CanceledError = CanceledError;
 exports.EventEmitter = EventEmitter;
 exports.TimeoutError = TimeoutError;
 exports.asap = asap;
+exports.bottleneck = bottleneck;
 exports["default"] = AxiosPromise;
 exports.defineConstants = defineConstants;
 exports.global = global$1;

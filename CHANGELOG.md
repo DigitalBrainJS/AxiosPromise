@@ -1,5 +1,16 @@
 # Changelog
 
+# [0.11.0](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.10.0...v0.11.0) (2024-03-19)
+
+
+### Features
+
+* **helper:** add bottleneck helper; ([#56](https://github.com/DigitalBrainJS/AxiosPromise/issues/56)) ([9463140](https://github.com/DigitalBrainJS/AxiosPromise/commit/94631400de8abf3384973614f4c1626f3a7ad08a))
+
+### Contributors to this release
+
+- Dmitriy Mozgovoy
+
 # [0.10.0](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.9.3...v0.10.0) (2024-02-08)
 
 
