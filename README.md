@@ -215,6 +215,147 @@ const p = new AxiosPromise((resolve, reject, {onCancel}) => {
 
 > Note: uncaught `CanceledError` rejection won't lead to `unhandledrejection` warning 
 
+## Helpers
+### bottleneck
+
+A helper that creates a simple queue by decorating an asynchronous function.
+
+`bottleneck(fn, options?: {concurrency: number, cancelRunning: boolean, sync: boolean, timeout: number, taskTimeout: number, queueTimeout: number})`
+
+```js
+  const fn = bottleneck(function* () {
+    console.log('start');
+    yield AxiosPromise.delay(2000);
+    console.log('end');
+    return 'foo'
+  }, {concurrency: 1});
+
+  const results = await Promise.allSettled([
+    fn(),
+    fn(),
+    fn()
+  ]);
+
+  console.log(results.map(({status, reason, value}) => status + ' : ' + (reason?.toString() || value)))
+```
+Log:
+```
+start
+end
+start
+end
+start
+end
+[ 'fulfilled : foo', 'fulfilled : foo', 'fulfilled : foo' ]
+````
+
+### Options
+
+`cancelRunning` - cancel running tasks if the concurrency limit is reached
+
+```js
+const fn = bottleneck(function* () {
+  console.log('start');
+  yield AxiosPromise.delay(2000);
+  console.log('end');
+  return 'foo'
+}, {cancelRunning: true, concurrency: 1});
+
+const results = await Promise.allSettled([
+  fn(),
+  fn(),
+  fn()
+]);
+
+console.log(results.map(({status, reason, value}) => status + ' : ' + (reason?.message || value)))
+```
+Log:
+```
+start
+end
+[
+  'rejected : CanceledError: task limit reached',
+  'rejected : CanceledError: task limit reached',
+  'fulfilled : foo'
+]
+```
+
+`timeout/taskTimeout/queueTimeout` - use AxiosPromiseSync instead AxiosPromise
+
+Sets appropriate timeouts
+
+```js
+(async () => {
+  const fn = bottleneck(function* (t = 2000) {
+    console.log('start');
+    yield AxiosPromise.delay(t);
+    console.log('end');
+    return 'foo'
+  }, {concurrency: 1, taskTimeout: 1000});
+
+  const results = await Promise.allSettled([
+    fn(),
+    fn(),
+    fn(500)
+  ]);
+
+  console.log(results.map(({status, reason, value}) => status + ' : ' + (reason?.toString() || value)))
+})();
+```
+
+Log:
+
+```
+start
+start
+start
+end
+[
+  'rejected : TimeoutError: task timeout',
+  'rejected : TimeoutError: task timeout',
+  'fulfilled : foo'
+]
+```
+
+### Manual cancellation
+
+```js
+  const fn = bottleneck(function* (t = 2000) {
+    console.log('start');
+    yield AxiosPromise.delay(t);
+    console.log('end');
+    return 'foo'
+  }, {concurrency: 1});
+
+  const tasks = [
+    fn(),
+    fn(),
+    fn()
+  ];
+
+  setTimeout(() => {
+    tasks[1].cancel('Oops!');
+  }, 500);
+
+  const results = await Promise.allSettled(tasks);
+
+  console.log(results.map(({status, reason, value}) => status + ' : ' + (reason?.toString() || value)))
+```
+
+Log:
+
+```
+start
+end
+start
+end
+[
+  'fulfilled : foo',
+  'rejected : CanceledError: Oops!',
+  'fulfilled : foo'
+]
+```
+
 ## License
 
 The MIT License Copyright (c) 2023 Dmitriy Mozgovoy robotshara@gmail.com

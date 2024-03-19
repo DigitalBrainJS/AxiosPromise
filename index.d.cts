@@ -100,7 +100,7 @@ declare namespace AxiosPromise {
 
         timeout(ms: number, errorOrMessage?: Error|string|number): AxiosPromise<R>;
 
-        listen(signal: GenericAbortSignal): AxiosPromise<R>;
+        listen(signal?: GenericAbortSignal): AxiosPromise<R>;
 
         cancel(reason?: any): boolean;
 
@@ -164,5 +164,6 @@ declare namespace AxiosPromise {
     function setImmediate(handler: ()=> void): void;
     function asap(handler: ()=> void): void;
     function symbols(...names: string[]): IterableIterator<symbol>;
+    function bottleneck<TResult = any, TArgs extends any[] = []>(fn: (...args: TArgs) => any, options?: {concurrency: number, cancelRunning: boolean, sync: boolean, timeout: number, taskTimeout: number, queueTimeout: number}) : (...args: TArgs) => AxiosPromise<TResult>
     const global: object;
 }
