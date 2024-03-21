@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.11.1](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.11.0...v0.11.1) (2024-03-21)
+
+
+### Bug Fixes
+
+* **UnhandledRejectionError:** fixed UnhandledRejectionError constructor to handle a string source; ([#58](https://github.com/DigitalBrainJS/AxiosPromise/issues/58)) ([f5a7da1](https://github.com/DigitalBrainJS/AxiosPromise/commit/f5a7da171c06dbd47251e4bd61bedc4bf19b8725))
+
+### Contributors to this release
+
+- Dmitriy Mozgovoy
+
 # [0.11.0](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.10.0...v0.11.0) (2024-03-19)
 
 
