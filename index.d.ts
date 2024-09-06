@@ -122,8 +122,53 @@ export class AxiosPromise <R = any> implements Thenable <R> {
     static readonly CanceledError: typeof CanceledError;
     static readonly TimeoutError: typeof TimeoutError;
     static _unhandledRejection(reason: any, promise: AxiosPromise): void;
-    static promisify<TResult = any>(fn: (...args: any) => IterableIterator<TResult | Thenable<TResult>>, options?: PromisifyOptions): () => AxiosPromise<TResult>;
-    static promisify<TResult = any>(fn: (scope: AxiosPromise<TResult>, ...args: any) => IterableIterator<TResult | Thenable<TResult>>, options?: PromisifyOptions): () => AxiosPromise<TResult>;
+
+    static promisify<TResult = any>(
+        fn: (...args: any) => IterableIterator<TResult | Thenable<TResult>>,
+        options?: PromisifyOptions & {scopeArg: false | undefined}
+    ): (...args: any) => AxiosPromise<TResult>;
+
+    static promisify<T1, TResult = any>(
+        fn: (arg1: T1) => IterableIterator<TResult | Thenable<TResult>>,
+        options?: PromisifyOptions & {scopeArg: false | undefined}
+    ): (arg1: T1) => AxiosPromise<TResult>;
+
+    static promisify<T1, T2, TResult = any>(
+        fn: (arg1: T1, arg2: T2) => IterableIterator<TResult | Thenable<TResult>>,
+        options?: PromisifyOptions & {scopeArg: false | undefined}
+    ): (arg1: T1, arg2: T2) => AxiosPromise<TResult>;
+
+    static promisify<T1, T2, T3, TResult = any>(
+        fn: (arg1: T1, arg2: T2, arg3: T3) => IterableIterator<TResult | Thenable<TResult>>,
+        options?: PromisifyOptions & {scopeArg: false | undefined}
+    ): (arg1: T1, arg2: T2, arg3: T3) => AxiosPromise<TResult>;
+
+
+
+
+
+    static promisify<TResult = any>(
+        fn: (scope: AxiosPromise<TResult>, ...args: any) => IterableIterator<TResult | Thenable<TResult>>,
+        options: PromisifyOptions & {scopeArg: true}
+    ): (...args: any) => AxiosPromise<TResult>;
+
+    static promisify<T1, TResult = any>(
+        fn: (scope: AxiosPromise<TResult>, arg1: T1) => IterableIterator<TResult | Thenable<TResult>>,
+        options: PromisifyOptions & {scopeArg: true}
+    ): (arg1: T1) => AxiosPromise<TResult>;
+
+    static promisify<T1, T2, TResult = any>(
+        fn: (scope: AxiosPromise<TResult>, arg1: T1, arg2: T2) => IterableIterator<TResult | Thenable<TResult>>,
+        options: PromisifyOptions & {scopeArg: true}
+    ): (arg1: T1, arg2: T2) => AxiosPromise<TResult>;
+
+    static promisify<T1, T2, T3, TResult = any>(
+        fn: (scope: AxiosPromise<TResult>, arg1: T1, arg2: T2, arg3: T3) => IterableIterator<TResult | Thenable<TResult>>,
+        options: PromisifyOptions & {scopeArg: true}
+    ): (arg1: T1, arg2: T2, arg3: T3) => AxiosPromise<TResult>;
+
+
+
     static promisifyAll(obj: object, options?: PromisifyAllOptions): void;
 }
 
