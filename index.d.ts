@@ -86,6 +86,9 @@ export class TimeoutError extends CanceledError {
 
 type OnCancelListener = (reason: CanceledError) => void;
 
+type PromisifyFnReturnType<R extends any, T = R> =
+    T extends Generator<any, infer R, any> ? R : T extends Thenable<infer R> ? R : T;
+
 export class AxiosPromise <R = any> implements Thenable <R> {
     constructor (callback: (resolve : (value?: R | Thenable<R>) => void, reject: (error?: any) => void, scope: AxiosPromise<R>) => void | OnCancelListener, options?: AxiosPromiseOptions);
     then <U> (onFulfilled?: (value: R, scope: AxiosPromise<U>) => U | Thenable<U>, onRejected?: (error: any, scope: AxiosPromise<U>) => U | Thenable<U>): AxiosPromise<U>;
@@ -122,8 +125,17 @@ export class AxiosPromise <R = any> implements Thenable <R> {
     static readonly CanceledError: typeof CanceledError;
     static readonly TimeoutError: typeof TimeoutError;
     static _unhandledRejection(reason: any, promise: AxiosPromise): void;
-    static promisify<TResult = any>(fn: (...args: any) => IterableIterator<TResult | Thenable<TResult>>, options?: PromisifyOptions): () => AxiosPromise<TResult>;
-    static promisify<TResult = any>(fn: (scope: AxiosPromise<TResult>, ...args: any) => IterableIterator<TResult | Thenable<TResult>>, options?: PromisifyOptions): () => AxiosPromise<TResult>;
+
+    static promisify<R, T extends any[]>(
+        fn: (...args: T) => R,
+        options?: PromisifyOptions & {scopeArg: false | undefined}
+    ): (...args: T) => AxiosPromise<PromisifyFnReturnType<R>>;
+
+    static promisify<R, T extends any[]>(
+        fn: (scope: AxiosPromise<PromisifyFnReturnType<R>>, ...args: T) => R,
+        options: PromisifyOptions & {scopeArg: true}
+    ): (...args: T) => AxiosPromise<PromisifyFnReturnType<R>>;
+
     static promisifyAll(obj: object, options?: PromisifyAllOptions): void;
 }
 
