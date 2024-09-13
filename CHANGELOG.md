@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.11.3](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.11.2...v0.11.3) (2024-09-13)
+
+
+### Bug Fixes
+
+* **types:** improve promisify types; ([#62](https://github.com/DigitalBrainJS/AxiosPromise/issues/62)) ([c64ee0f](https://github.com/DigitalBrainJS/AxiosPromise/commit/c64ee0f8b310ff4b022f16b1693f4d0515b1553c))
+
+### Contributors to this release
+
+- Dmitriy Mozgovoy
+
 ## [0.11.2](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.11.1...v0.11.2) (2024-09-06)
 
 
