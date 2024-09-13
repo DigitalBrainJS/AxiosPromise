@@ -37,6 +37,9 @@ interface PromisifyAllOptions extends PromisifyOptions {
     reducer?: (this: object, key: string | symbol, value: any) => string | boolean | undefined
 }
 
+type PromisifyFnReturnType<R extends any, T = R> =
+    T extends Generator<any, infer R, any> ? R : T extends Thenable<infer R> ? R : T;
+
 declare namespace AxiosPromise {
     type EventName = string|symbol;
 
@@ -144,8 +147,16 @@ declare namespace AxiosPromise {
 
         static _unhandledRejection(reason: any, promise: AxiosPromise): void;
 
-        static promisify<TResult = any>(fn: (...args: any) => IterableIterator<TResult | Thenable<TResult>>, options?: PromisifyOptions): () => AxiosPromise<TResult>;
-        static promisify<TResult = any>(fn: (scope: AxiosPromise<TResult>, ...args: any) => IterableIterator<TResult | Thenable<TResult>>, options?: PromisifyOptions): () => AxiosPromise<TResult>;
+        static promisify<R, T extends any[]>(
+            fn: (...args: T) => R,
+            options?: PromisifyOptions & {scopeArg: false | undefined}
+        ): (...args: T) => AxiosPromise<PromisifyFnReturnType<R>>;
+
+        static promisify<R, T extends any[]>(
+            fn: (scope: AxiosPromise<PromisifyFnReturnType<R>>, ...args: T) => R,
+            options: PromisifyOptions & {scopeArg: true}
+        ): (...args: T) => AxiosPromise<PromisifyFnReturnType<R>>;
+
         static promisifyAll(obj: object, options?: PromisifyAllOptions): void;
     }
 
