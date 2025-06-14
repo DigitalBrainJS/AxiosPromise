@@ -1,4 +1,4 @@
-// AxiosPromise v0.12.0 Copyright (c) 2025 Dmitriy Mozgovoy and contributors
+// AxiosPromise v0.12.1 Copyright (c) 2025 Dmitriy Mozgovoy and contributors
 'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
@@ -359,7 +359,7 @@ const _AbortController = hasNativeSupport ? AbortController : class AbortControl
   }
 };
 
-const VERSION = "0.12.0";
+const VERSION = "0.12.1";
 
 class UnhandledRejectionError extends Error{
   constructor(err, message) {

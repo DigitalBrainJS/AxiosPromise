@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.12.1](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.12.0...v0.12.1) (2025-06-14)
+
+
+### Bug Fixes
+
+* **types:** fix `promisifyAll` return type; ([#68](https://github.com/DigitalBrainJS/AxiosPromise/issues/68)) ([b32ae25](https://github.com/DigitalBrainJS/AxiosPromise/commit/b32ae256a6fbf34980f22b1a0094e35ab9bcc186))
+
+### Contributors to this release
+
+- Dmitriy Mozgovoy
+
 # [0.12.0](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.11.3...v0.12.0) (2025-06-14)
 
 
