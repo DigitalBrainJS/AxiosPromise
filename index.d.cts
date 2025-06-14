@@ -1,5 +1,7 @@
 // TypeScript Version: 4.7
 
+type AnyFunction = (...args: any) => any;
+
 export interface Thenable <R> {
     then <U> (onFulfilled?: (value: R) => U | Thenable<U>, onRejected?: (error: any) => U | Thenable<U>): Thenable<U>;
     then <U> (onFulfilled?: (value: R) => U | Thenable<U>, onRejected?: (error: any) => void): Thenable<U>;
@@ -9,9 +11,9 @@ type SettledStatus = 'fulfilled' | 'rejected';
 
 export interface GenericAbortSignal {
     readonly aborted: boolean;
-    onabort?: ((...args: any) => any) | null;
-    addEventListener?: (...args: any) => any;
-    removeEventListener?: (...args: any) => any;
+    onabort?: AnyFunction;
+    addEventListener?: AnyFunction;
+    removeEventListener?: AnyFunction;
 }
 
 interface AxiosPromiseOptions {
@@ -157,7 +159,7 @@ declare namespace AxiosPromise {
             options: PromisifyOptions & {scopeArg: true}
         ): (...args: T) => AxiosPromise<PromisifyFnReturnType<R>>;
 
-        static promisifyAll(obj: object, options?: PromisifyAllOptions): void;
+        static promisifyAll(obj: object | AnyFunction[], options?: PromisifyAllOptions): void;
     }
 
     class AxiosPromiseSync<R = any> extends AxiosPromise <R> {
