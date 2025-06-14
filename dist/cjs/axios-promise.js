@@ -1,4 +1,4 @@
-// AxiosPromise v0.11.3 Copyright (c) 2024 Dmitriy Mozgovoy and contributors
+// AxiosPromise v0.12.0 Copyright (c) 2025 Dmitriy Mozgovoy and contributors
 'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
@@ -359,7 +359,7 @@ const _AbortController = hasNativeSupport ? AbortController : class AbortControl
   }
 };
 
-const VERSION = "0.11.3";
+const VERSION = "0.12.0";
 
 class UnhandledRejectionError extends Error{
   constructor(err, message) {
@@ -1062,18 +1062,24 @@ class AxiosPromise {
   }
 
   static promisifyAll(obj, {reducer, ...options} = {}) {
-    const descriptors = Object.getOwnPropertyDescriptors(obj);
-    let ret, value;
+    if (Array.isArray(obj)) {
+      return obj.map((value) => isGeneratorFunction(value) ? this.promisify(value, options) : value);
+    } else {
+      const descriptors = Object.getOwnPropertyDescriptors(obj);
+      let ret, value;
 
-    Object.entries(descriptors).forEach(([key, descriptor]) => {
-      if ('value' in descriptor && isGeneratorFunction(value = descriptor.value) && descriptor.configurable &&
-        (!reducer || (ret = reducer.call(obj, key, value)))) {
-        Object.defineProperty(obj, ret || key, {
-          ...descriptor,
-          value: this.promisify(value, options)
-        });
-      }
-    });
+      Object.entries(descriptors).forEach(([key, descriptor]) => {
+        if ('value' in descriptor && descriptor.configurable && isGeneratorFunction(value = descriptor.value) &&
+          (!reducer || (ret = reducer.call(obj, key, value)))) {
+          Object.defineProperty(obj, ret || key, {
+            ...descriptor,
+            value: this.promisify(value, options)
+          });
+        }
+      });
+    }
+
+    return obj;
   }
 }
 

@@ -1,5 +1,21 @@
 # Changelog
 
+# [0.12.0](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.11.3...v0.12.0) (2025-06-14)
+
+
+### Bug Fixes
+
+* **core:** remove unused import; ([#65](https://github.com/DigitalBrainJS/AxiosPromise/issues/65)) ([6203c4d](https://github.com/DigitalBrainJS/AxiosPromise/commit/6203c4d7df5b0e6c0f1407cafabd6f6e1d87abed))
+
+
+### Features
+
+* **core:** add array support as source object for `promisifyAll` helper; ([#64](https://github.com/DigitalBrainJS/AxiosPromise/issues/64)) ([8dd2103](https://github.com/DigitalBrainJS/AxiosPromise/commit/8dd210323182409f694ac225a477f91d1a438259))
+
+### Contributors to this release
+
+- Dmitriy Mozgovoy
+
 ## [0.11.3](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.11.2...v0.11.3) (2024-09-13)
 
 
