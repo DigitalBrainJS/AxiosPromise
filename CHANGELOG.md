@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.11.3](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.11.2...v0.11.3) (2024-09-13)
+
+
+### Bug Fixes
+
+* **types:** improve promisify types; ([#62](https://github.com/DigitalBrainJS/AxiosPromise/issues/62)) ([c64ee0f](https://github.com/DigitalBrainJS/AxiosPromise/commit/c64ee0f8b310ff4b022f16b1693f4d0515b1553c))
+
+### Contributors to this release
+
+- Dmitriy Mozgovoy
+
+## [0.11.2](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.11.1...v0.11.2) (2024-09-06)
+
+
+### Bug Fixes
+
+* **signal:** improve signal reason support; ([#60](https://github.com/DigitalBrainJS/AxiosPromise/issues/60)) ([c6115d1](https://github.com/DigitalBrainJS/AxiosPromise/commit/c6115d17f83cd0551511bd8c8b68f16feadcc5e4))
+
+### Contributors to this release
+
+- Dmitriy Mozgovoy
+
 ## [0.11.1](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.11.0...v0.11.1) (2024-03-21)
 
 

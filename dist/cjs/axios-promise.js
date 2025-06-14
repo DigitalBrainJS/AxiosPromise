@@ -1,4 +1,4 @@
-// AxiosPromise v0.11.1 Copyright (c) 2024 Dmitriy Mozgovoy and contributors
+// AxiosPromise v0.11.3 Copyright (c) 2024 Dmitriy Mozgovoy and contributors
 'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
@@ -156,7 +156,8 @@ class CanceledError extends Error {
   }
 
   static from(thing) {
-    return this.isCanceledError(thing) ? thing : new this(thing instanceof Error ? thing.message : thing);
+    return this.isCanceledError(thing) ? thing :
+      new this(thing instanceof Error ? (thing.name !== 'AbortError' ? thing.message : '') : thing);
   }
 
   static isCanceledError(err) {
@@ -358,7 +359,7 @@ const _AbortController = hasNativeSupport ? AbortController : class AbortControl
   }
 };
 
-const VERSION = "0.11.1";
+const VERSION = "0.11.3";
 
 class UnhandledRejectionError extends Error{
   constructor(err, message) {
@@ -513,7 +514,7 @@ class AxiosPromise {
 
     if (signal) {
       if (signal.aborted) {
-        this.cancel();
+        this.cancel(signal.reason);
         return this;
       }
 
@@ -704,7 +705,7 @@ class AxiosPromise {
         invokeCallbacks(cancelCallbacks, [value]);
       }
 
-      controller && controller.abort();
+      controller && controller.abort(value);
     }
 
     const callbacks = this[kCallbacks];
@@ -1126,7 +1127,7 @@ const bottleneck = (fn, {concurrency = 1, cancelRunning, sync, timeout, taskTime
       .timeout(queueTimeout, 'queue timeout')
       .then(() => {
         return constructor.resolve(fn.apply(this, args)).timeout(taskTimeout, 'task timeout')
-      }).finally((v) => {
+      }).finally(() => {
         done = true;
         pending--;
         if (pushed) {
