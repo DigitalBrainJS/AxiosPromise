@@ -136,7 +136,7 @@ export class AxiosPromise <R = any> implements Thenable <R> {
         options: PromisifyOptions & {scopeArg: true}
     ): (...args: T) => AxiosPromise<PromisifyFnReturnType<R>>;
 
-    static promisifyAll(obj: object, options?: PromisifyAllOptions): void;
+    static promisifyAll(obj: object | AnyFunction[], options?: PromisifyAllOptions): void;
 }
 
 export class AxiosPromiseSync <R = any> extends AxiosPromise <R> {}

@@ -547,6 +547,21 @@ const signalReasonSupport = 'reason' in new AbortController().signal;
       assert.ok(ret instanceof PromiseConstructor);
       assert.strictEqual(await ret, 123);
     });
+
+    it('should support an array of functions as the source object', async () => {
+      const arr = [
+        function*(v) {
+          yield PromiseConstructor.delay(100);
+          return v;
+        }
+      ];
+
+      const promisifiedList = PromiseConstructor.promisifyAll(arr);
+
+      assert.ok(Array.isArray(promisifiedList), 'must be an array');
+
+      assert.strictEqual(await promisifiedList[0](123), 123);
+    });
   })
 });
 
