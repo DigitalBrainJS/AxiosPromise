@@ -159,7 +159,8 @@ declare namespace AxiosPromise {
             options: PromisifyOptions & {scopeArg: true}
         ): (...args: T) => AxiosPromise<PromisifyFnReturnType<R>>;
 
-        static promisifyAll(obj: object | AnyFunction[], options?: PromisifyAllOptions): void;
+        static promisifyAll(obj: object, options?: PromisifyAllOptions): object;
+        static promisifyAll(obj: AnyFunction[], options?: PromisifyAllOptions): any[];
     }
 
     class AxiosPromiseSync<R = any> extends AxiosPromise <R> {
