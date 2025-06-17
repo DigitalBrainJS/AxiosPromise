@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.12.2](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.12.1...v0.12.2) (2025-06-17)
+
+
+### Bug Fixes
+
+* **core:** native async generators shouldn't be resolved as a promise chain; ([#70](https://github.com/DigitalBrainJS/AxiosPromise/issues/70)) ([1d63eae](https://github.com/DigitalBrainJS/AxiosPromise/commit/1d63eaeee02089bf7c24fb788287cdd11c52c5a4))
+
+### Contributors to this release
+
+- Dmitriy Mozgovoy
+
 ## [0.12.1](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.12.0...v0.12.1) (2025-06-14)
 
 
