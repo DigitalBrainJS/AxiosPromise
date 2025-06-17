@@ -1,7 +1,9 @@
-// AxiosPromise v0.12.1 Copyright (c) 2025 Dmitriy Mozgovoy and contributors
+// AxiosPromise v0.12.2 Copyright (c) 2025 Dmitriy Mozgovoy and contributors
 const {
   hasOwn = (({hasOwnProperty}) => (obj, prop) => hasOwnProperty.call(obj, prop))(Object.prototype)
 } = Object;
+
+const {toStringTag} = Symbol;
 
 const isFunction$1 = (thing) => typeof thing === 'function';
 
@@ -45,7 +47,9 @@ const isAsyncFunction$1 = functionTypeTest(async () => {});
 
 const isPlainFunction$1 = functionTypeTest(() => {});
 
-const isGenerator$1 = (obj) => obj && isFunction$1(obj.next) && isFunction$1(obj.throw);
+const isGenerator$1 = (obj) =>
+  obj && typeof obj === 'object' && typeof obj.next === 'function' && typeof obj.throw === 'function' &&
+  obj[toStringTag] === 'Generator';
 
 const isContextDefined$1 = (context) => context != null && context !== _global;
 
@@ -355,7 +359,7 @@ const _AbortController = hasNativeSupport ? AbortController : class AbortControl
   }
 };
 
-const VERSION = "0.12.1";
+const VERSION = "0.12.2";
 
 class UnhandledRejectionError extends Error{
   constructor(err, message) {
