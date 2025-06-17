@@ -437,6 +437,19 @@ const signalReasonSupport = 'reason' in new AbortController().signal;
 
           assert.strictEqual(result, 125);
         });
+
+        it("should not resolve async generators as a promise chain", async() => {
+          const asyncGen = function*() {
+            yield 'foo';
+          };
+
+          const result = await PromiseConstructor.resolve(123).then(function* (v) {
+            yield delay(100);
+            return yield asyncGen;
+          });
+
+          assert.strictEqual(result, asyncGen);
+        });
       });
     });
   });
