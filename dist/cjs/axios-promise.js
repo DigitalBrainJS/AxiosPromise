@@ -1,4 +1,4 @@
-// AxiosPromise v0.12.2 Copyright (c) 2025 Dmitriy Mozgovoy and contributors
+// AxiosPromise v0.12.3 Copyright (c) 2025 Dmitriy Mozgovoy and contributors
 'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
@@ -37,8 +37,8 @@ const _setImmediate = ((setImmediateSupported, postMessageSupported) => {
   isFunction$1(_global.postMessage)
 );
 
-const asap$1 = typeof queueMicrotask !== 'undefined' ?
-  queueMicrotask : ( typeof process !== 'undefined' && process.nextTick || _setImmediate);
+const asap$1 = typeof process !== 'undefined' && process.nextTick ||
+  (typeof queueMicrotask !== 'undefined' ? queueMicrotask : _setImmediate);
 
 const functionTypeTest = ({constructor}) => {
   const {name} = constructor;
@@ -66,7 +66,6 @@ const lazyBind$1 = (obj, props, {bindMethods = true} = {}) => {
     const {value, get, enumerable} = descriptor;
 
     if('value' in descriptor && !isFunction$1(value)) {
-      console.warn('skip', prop);
       return;
     }
 
@@ -121,10 +120,12 @@ const isAbortController$1 = (thing) => {
   return thing && typeof thing === 'object' && isFunction$1(thing.abort) && isAbortSignal$1(thing.signal);
 };
 
+let symbolId = 0;
+
 const symbols$1 = (...tags) => ({
   * [Symbol.iterator]() {
     while (true) {
-      yield Symbol(tags.shift() || '');
+      yield Symbol(tags.shift() || `#${symbolId++}`);
     }
   }
 });
@@ -363,7 +364,7 @@ const _AbortController = hasNativeSupport ? AbortController : class AbortControl
   }
 };
 
-const VERSION = "0.12.2";
+const VERSION = "0.12.3";
 
 class UnhandledRejectionError extends Error{
   constructor(err, message) {

@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.12.3](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.12.2...v0.12.3) (2025-06-30)
+
+
+### Bug Fixes
+
+* **core:** fix queue order usage in asap util; ([#72](https://github.com/DigitalBrainJS/AxiosPromise/issues/72)) ([b9ce764](https://github.com/DigitalBrainJS/AxiosPromise/commit/b9ce764ec0c15a5983fd019b9ede6cc4d2e01d7e))
+
+### Contributors to this release
+
+- Dmitriy Mozgovoy
+
 ## [0.12.2](https://github.com/DigitalBrainJS/AxiosPromise/compare/v0.12.1...v0.12.2) (2025-06-17)
 
 
